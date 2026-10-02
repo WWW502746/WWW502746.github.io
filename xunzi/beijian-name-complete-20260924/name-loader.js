@@ -2,7 +2,7 @@
   const root = document.getElementById('name-app');
   const message = root.querySelector('[data-name-load-message]');
   const retry = root.querySelector('[data-name-retry]');
-  const entry = new URL('name-experience.js?v=name14', document.currentScript.src);
+  const entry = new URL('name-experience.js?v=name15', document.currentScript.src);
   let attempt = 0;
   async function load() {
     retry.hidden = true;

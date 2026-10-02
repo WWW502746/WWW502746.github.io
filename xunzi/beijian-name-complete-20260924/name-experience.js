@@ -238,20 +238,24 @@ function result() {
         return `<li><span>${pad(index + 1)}</span><strong>${esc(char)}</strong><span>${style.label}</span></li>`;
       }).join('')}</ol></div>
     </header>
+    <aside class="name-result__print"><div class="name-result__print-head"><span>PERSONAL RUBBING</span><span>${id}</span></div>
+      <canvas id="name-poster" width="900" height="1260" role="img" aria-label="${esc(state.name)}的个人拓片，书写人格${esc(persona.name)}"></canvas>
+      <p class="name-result__materials"><span>拓印记录</span>${[finishLabel('stone'), finishLabel('ink'), finishLabel('paper'), finishLabel('technique')].join(' / ')}</p>
+      <div class="name-print-actions"><button data-action="download">${icon('download')} 保存个人拓片</button><button data-action="sources">${icon('arrow-up-right')} 查看字的来处</button></div><p class="name-message" role="status" id="name-download-message"></p>
+    </aside>
     <section class="name-result__story" aria-labelledby="name-result-about">
       <p class="name-kicker">THE CHARACTER / 人格叙事</p>
-      <h2 id="name-result-about">你与这方字迹</h2>
+      <h2 id="name-result-about">${esc(persona.name)}</h2>
       <p class="name-result__intro">${esc(persona.intro)}</p>
       <div class="name-result__chapters">
         <article><span>01 / 天赋所在</span><h3>适合你的舞台</h3><p>${esc(persona.strength)}</p></article>
         <article><span>02 / 向前一步</span><h3>值得练习的事</h3><p>${esc(persona.growth)}</p></article>
       </div>
     </section>
-    <aside class="name-result__print"><div class="name-result__print-head"><span>PERSONAL RUBBING</span><span>${id}</span></div>
-      <canvas id="name-poster" width="900" height="1260" role="img" aria-label="${esc(state.name)}的个人拓片，书写人格${esc(persona.name)}"></canvas>
-      <p class="name-result__materials"><span>拓印记录</span>${[finishLabel('stone'), finishLabel('ink'), finishLabel('paper'), finishLabel('technique')].join(' / ')}</p>
-      <div class="name-print-actions"><button data-action="download">${icon('download')} 保存个人拓片</button><button data-action="sources">${icon('arrow-up-right')} 查看字的来处</button></div><p class="name-message" role="status" id="name-download-message"></p>
-    </aside>
+    <figure class="name-result__art">
+      <img src="assets/name/personas/${pad(profileNumber)}.webp" width="1086" height="1448" alt="${esc(persona.name)}的水墨人物画，题有对应的小诗" loading="lazy" decoding="async">
+      <figcaption><span>性格人物画</span><span>${pad(profileNumber)} / 16</span></figcaption>
+    </figure>
     <section class="name-result__basis">
       <details class="name-spectrum" open><summary>这次选字的书写谱 ${icon('plus')}</summary><div class="name-spectrum__body">${spectrum.map((item, index) => spectrumFacet(item, index, persona.axes)).join('')}</div></details>
       <p class="name-provenance">出现最多的字形定组；并列时取先选的字形。材质选择投票决定组内类型：石材、墨色各计两票，其余各计一票；并列时依次参考石材、墨色。内容是艺术化的性格叙事，并非心理测评或真实碑刻鉴定。</p>
