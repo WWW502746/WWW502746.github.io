@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>碑间 · 寻字</title>
+  <script>if (new URLSearchParams(location.search).has('embed')) document.documentElement.classList.add('is-embedded');</script>
+  <style>html.is-embedded .site-header { display:none; }</style>
+  <link rel="stylesheet" href="standalone.css">
+  <link rel="stylesheet" href="name-experience.css?v=name2">
+  <link rel="stylesheet" href="typography.css">
+</head>
+<body class="is-name">
+  <header class="site-header" aria-label="站点导航">
+    <a class="brand" href="./"><span>碑间</span><small>BEIJIAN</small></a>
+    <nav aria-label="当前栏目">寻字</nav>
+    <span class="edition">NAME ARCHIVE</span>
+  </header>
+  <main>
+    <section class="name-page page--active" data-page="name" aria-label="寻字">
+      <div id="name-app">
+        <div class="name-loading" role="status">
+          <p class="name-kicker">碑间 / 字形索引</p>
+          <h1>寻字</h1>
+          <p data-name-load-message>正在打开寻字体验…</p>
+          <button type="button" data-name-retry hidden>重新加载</button>
+          <noscript>请开启浏览器的 JavaScript，以体验寻字与成拓。</noscript>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script defer src="vendor/lucide.min.js"></script>
+  <script defer src="name-loader.js"></script>
+</body>
+</html>

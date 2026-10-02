@@ -1,0 +1,303 @@
+:root {
+  --black: #070808;
+  --black-soft: #0c0e0f;
+  --graphite: #181b1d;
+  --line: rgba(224, 225, 219, 0.18);
+  --bone: #d8d7d0;
+  --muted: #777b7c;
+  --silver: #aeb8be;
+  --pad: clamp(24px, 4vw, 72px);
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; background: var(--black); }
+
+body {
+  margin: 0;
+  color: var(--bone);
+  background: var(--black);
+  font-family: "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  overflow-x: hidden;
+}
+
+body.is-locked { overflow: hidden; }
+
+button { color: inherit; font: inherit; }
+button, a { -webkit-tap-highlight-color: transparent; }
+button { border: 0; padding: 0; background: none; cursor: pointer; }
+img { display: block; width: 100%; }
+
+.noise {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E");
+}
+
+.boot {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-content: center;
+  gap: 22px;
+  background: #050606;
+  transition: transform 1.25s var(--ease), visibility 1.25s;
+}
+
+.boot.is-gone { transform: translateY(-102%); visibility: hidden; }
+.boot__mark { font: 300 clamp(32px, 4vw, 58px)/1 "Songti SC", "STSong", serif; letter-spacing: .24em; }
+.boot__line { width: 150px; height: 1px; background: #252829; overflow: hidden; }
+.boot__line i { display:block; width:100%; height:100%; background: var(--bone); animation: load 1.45s var(--ease) both; transform-origin:left; }
+.boot span { color: #666; font-size: 10px; letter-spacing: .35em; }
+
+@keyframes load { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  width: 100%;
+  height: 92px;
+  padding: 0 var(--pad);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  mix-blend-mode: difference;
+}
+
+.brand { justify-self: start; display: flex; align-items: baseline; gap: 14px; }
+.brand span { font: 300 22px/1 "Songti SC", "STSong", serif; letter-spacing: .18em; }
+.brand small, .edition { color: #7c7f80; font-size: 8px; letter-spacing: .24em; }
+
+.site-header nav { display: flex; gap: clamp(24px, 3vw, 52px); }
+.site-header nav button { position: relative; color: #9b9d9d; font-size: 11px; letter-spacing: .18em; }
+.site-header nav button::after { content:""; position:absolute; left:0; bottom:-8px; width:100%; height:1px; background:currentColor; transform:scaleX(0); transition:transform .4s var(--ease); transform-origin:right; }
+.site-header nav button:hover::after, .site-header nav button.is-current::after { transform:scaleX(1); transform-origin:left; }
+
+.header-side { justify-self: end; display:flex; align-items:center; gap:24px; }
+.sound-toggle { width:18px; height:15px; display:flex; align-items:center; justify-content:center; gap:2px; }
+.sound-toggle i { width:1px; height:4px; background:#aaa; transition:height .3s; }
+.sound-toggle[aria-pressed="true"] i:nth-child(1) { height:10px; animation:pulse .8s infinite alternate; }
+.sound-toggle[aria-pressed="true"] i:nth-child(2) { height:14px; animation:pulse .6s infinite alternate-reverse; }
+.sound-toggle[aria-pressed="true"] i:nth-child(3) { height:8px; animation:pulse .9s infinite alternate; }
+@keyframes pulse { to { height: 3px; } }
+
+.menu-button { display:none; width:26px; height:18px; position:relative; }
+.menu-button i { position:absolute; right:0; width:22px; height:1px; background:#aaa; }
+.menu-button i:first-child { top:5px; }
+.menu-button i:last-child { bottom:5px; width:14px; }
+
+.transition { position:fixed; inset:0; z-index:300; background:#111414; transform:scaleY(0); transform-origin:bottom; pointer-events:none; }
+.transition.is-entering { animation:wipe .9s var(--ease) both; }
+@keyframes wipe { 0%{transform:scaleY(0);transform-origin:bottom} 45%,55%{transform:scaleY(1)} 100%{transform:scaleY(0);transform-origin:top} }
+
+.page { display:none; min-height:100vh; }
+.page--active { display:block; animation:pageIn .8s .35s both; }
+@keyframes pageIn { from{opacity:0} to{opacity:1} }
+
+.hero { min-height:100svh; position:relative; overflow:hidden; background:#050606; }
+.hero::after { content:""; position:absolute; inset:0; background:linear-gradient(90deg, rgba(3,4,4,.18), transparent 42%, rgba(3,4,4,.08)); pointer-events:none; }
+.hero__copy { position:absolute; left:var(--pad); bottom:10.5vh; z-index:5; }
+.eyebrow { margin:0; color:#7d8283; font-size:9px; letter-spacing:.28em; text-transform:uppercase; }
+.hero h1 { margin:clamp(28px, 5vh, 62px) 0 18px; display:flex; gap:.16em; font:300 clamp(82px, 11vw, 184px)/.78 "Songti SC", "STSong", "SimSun", serif; letter-spacing:-.06em; }
+.hero h1 span { display:block; opacity:0; transform:translateY(50px); animation:titleIn 1.4s var(--ease) forwards; }
+.hero h1 span:nth-child(2) { animation-delay:.12s; }
+@keyframes titleIn { to { opacity:1; transform:none; } }
+.hero__note { margin:28px 0 0; color:#8b8f90; font:300 12px/1.5 "Songti SC", "STSong", serif; letter-spacing:.34em; }
+
+.light-surface { --x:50%; --y:50%; position:relative; overflow:hidden; }
+.surface-base, .surface-light { width:100%; height:100%; object-fit:cover; }
+.surface-base { filter:brightness(.48) contrast(1.18) saturate(.55); }
+.surface-light { position:absolute; inset:0; filter:brightness(1.08) contrast(1.16) saturate(.45); -webkit-mask-image:radial-gradient(circle 18vw at var(--x) var(--y), #000 0, rgba(0,0,0,.96) 14%, rgba(0,0,0,.54) 42%, transparent 70%); mask-image:radial-gradient(circle 18vw at var(--x) var(--y), #000 0, rgba(0,0,0,.96) 14%, rgba(0,0,0,.54) 42%, transparent 70%); }
+.surface-glow { position:absolute; inset:0; background:radial-gradient(circle 10vw at var(--x) var(--y), rgba(190,213,224,.08), transparent 72%); mix-blend-mode:screen; pointer-events:none; }
+.hero__stone { position:absolute; z-index:1; top:0; right:-2%; width:70%; height:100%; transform:scale(1.035); transition:transform 1.6s var(--ease); }
+.hero__stone:hover { transform:scale(1.055); }
+.hero__stone .surface-base, .hero__stone .surface-light { object-position:center center; }
+
+.hero__count { position:absolute; right:var(--pad); bottom:38px; z-index:5; display:flex; align-items:center; gap:9px; color:#777; font-size:8px; letter-spacing:.12em; }
+.hero__count i { width:42px; height:1px; background:#555; }
+.scroll-cue { position:absolute; z-index:5; left:50%; bottom:34px; display:flex; align-items:center; gap:12px; color:#767979; font-size:8px; letter-spacing:.26em; transform:translateX(-50%); }
+.scroll-cue i { display:block; width:28px; height:1px; background:#777; animation:scrollCue 1.8s var(--ease) infinite; }
+@keyframes scrollCue { 0%,100%{transform:scaleX(.3);transform-origin:left} 50%{transform:scaleX(1);transform-origin:left} 51%{transform-origin:right} }
+
+.statement { min-height:86vh; padding:18vh var(--pad); display:grid; grid-template-columns:1fr 2.1fr 1fr; gap:5vw; align-items:start; }
+.section-index { margin:8px 0; color:#5e6263; font-size:9px; letter-spacing:.2em; }
+.statement blockquote { margin:0; font:300 clamp(27px, 3.8vw, 60px)/1.7 "Songti SC", "STSong", serif; letter-spacing:.08em; }
+.statement__aside { padding-top:40vh; color:#777b7c; font:300 11px/2.1 "Songti SC", "STSong", serif; }
+
+.featured { min-height:100vh; padding:6vh var(--pad) 16vh; display:grid; grid-template-columns:minmax(0,2fr) minmax(240px,.7fr); gap:7vw; align-items:end; }
+.feature-card { width:100%; text-align:left; }
+.feature-card figure { margin:0; height:76vh; overflow:hidden; background:#050606; }
+.feature-card img { height:100%; object-fit:cover; object-position:center; filter:brightness(.67) grayscale(1); transition:transform 1.4s var(--ease), filter 1s; }
+.feature-card:hover img { transform:scale(1.025); filter:brightness(.84) grayscale(.86); }
+.feature-card__meta { display:grid; grid-template-columns:1fr 2fr 1fr; align-items:center; gap:10px; padding:17px 0; border-bottom:1px solid var(--line); }
+.feature-card__meta span { color:#727677; font-size:9px; letter-spacing:.14em; }
+.feature-card__meta span:last-child { text-align:right; }
+.feature-card__meta h2 { margin:0; text-align:center; font:300 21px/1 "Songti SC", "STSong", serif; letter-spacing:.22em; }
+.feature-text { padding-bottom:12vh; }
+.feature-text span { color:#616566; font-size:9px; letter-spacing:.18em; }
+.feature-text p { margin:36px 0 0; font:300 clamp(20px, 2vw, 32px)/1.75 "Songti SC", "STSong", serif; letter-spacing:.08em; }
+
+.archive-invite { padding:18vh var(--pad); min-height:70vh; display:flex; flex-direction:column; justify-content:space-between; background:#0a0c0d; }
+.archive-invite p { margin:0; max-width:600px; color:#86898a; font:300 clamp(24px,3vw,48px)/1.6 "Songti SC", "STSong", serif; letter-spacing:.08em; }
+.arrow-link { align-self:flex-end; display:flex; gap:28px; align-items:center; padding-bottom:12px; border-bottom:1px solid #555; font:300 18px/1 "Songti SC", "STSong", serif; letter-spacing:.16em; }
+.arrow-link i { font-style:normal; transition:transform .4s var(--ease); }
+.arrow-link:hover i { transform:translate(5px,-5px); }
+
+.works-page { padding:0 var(--pad); }
+.works-intro { min-height:76vh; padding-top:19vh; display:grid; grid-template-columns:2fr 1fr; align-items:end; padding-bottom:12vh; }
+.works-intro h1 { margin:30px 0 0; font:300 clamp(48px,7.5vw,120px)/1.2 "Songti SC", "STSong", serif; letter-spacing:.06em; }
+.works-intro > p { margin:0 0 16px; color:#777b7c; font:300 12px/2 "Songti SC", "STSong", serif; letter-spacing:.16em; }
+.works-grid { display:grid; grid-template-columns:repeat(12,1fr); column-gap:clamp(14px,2vw,36px); row-gap:18vh; align-items:start; }
+.work { text-align:left; min-width:0; }
+.work figure { position:relative; margin:0; overflow:hidden; background:#0c0e0f; }
+.work figure::after { content:""; position:absolute; inset:0; background:linear-gradient(110deg,transparent 35%,rgba(190,210,220,.12),transparent 67%); transform:translateX(-110%); transition:transform 1.2s var(--ease); }
+.work:hover figure::after { transform:translateX(110%); }
+.work img { height:100%; object-fit:cover; filter:grayscale(1) brightness(.67); transition:transform 1.1s var(--ease),filter .8s; }
+.work:hover img { transform:scale(1.025); filter:grayscale(.7) brightness(.85); }
+.work figcaption { padding:12px 0 0; display:grid; grid-template-columns:auto 1fr auto; gap:12px; border-top:1px solid var(--line); margin-top:10px; font-size:9px; letter-spacing:.12em; }
+.work figcaption span { color:#666b6c; }
+.work figcaption strong { font:300 13px/1 "Songti SC", "STSong", serif; letter-spacing:.18em; }
+.work--1 { grid-column:1 / 4; margin-top:24vh; }
+.work--1 figure { height:58vh; }
+.work--2 { grid-column:5 / 10; }
+.work--2 figure { height:82vh; }
+.work--3 { grid-column:10 / 13; margin-top:32vh; }
+.work--3 figure { height:54vh; }
+.work--4 { grid-column:2 / 9; }
+.work--4 figure { height:46vh; }
+.work--5 { grid-column:10 / 13; margin-top:18vh; }
+.work--5 figure { height:62vh; }
+.work--6 { grid-column:1 / 5; margin-top:16vh; }
+.work--6 figure { height:46vh; }
+.work--7 { grid-column:7 / 12; }
+.work--7 figure { height:76vh; }
+.work--1 img,.work--7 img { object-position:center; }
+.work--2 img,.work--6 img { object-position:55% center; }
+
+.page-footer { margin-top:22vh; padding:30px 0 38px; display:flex; justify-content:space-between; border-top:1px solid var(--line); color:#626667; font-size:8px; letter-spacing:.18em; }
+
+.detail-stage { min-height:100svh; position:relative; overflow:hidden; display:grid; grid-template-columns:1fr 32%; align-items:center; padding:11vh var(--pad) 4vh; }
+.detail-back { position:absolute; left:var(--pad); top:118px; z-index:5; color:#6d7172; font-size:9px; letter-spacing:.18em; }
+.detail-glyph { position:absolute; left:-4vw; top:8vh; color:#101213; font:300 min(48vw,700px)/1 "Songti SC", "STSong", serif; pointer-events:none; }
+.detail__stone { justify-self:center; z-index:2; width:min(38vw,570px); height:78vh; overflow:visible; }
+.detail-stage.has-3d .detail__stone { display:none; }
+.detail-stage:not(.has-3d) .detail__model { display:none; }
+.detail__stone img { object-fit:contain; }
+.detail__stone .surface-base { filter:brightness(.55) contrast(1.2) saturate(.55); }
+.detail__stone .surface-light { object-fit:contain; -webkit-mask-image:radial-gradient(ellipse 65% 22% at var(--x) var(--y),#000 0,rgba(0,0,0,.75) 38%,transparent 75%); mask-image:radial-gradient(ellipse 65% 22% at var(--x) var(--y),#000 0,rgba(0,0,0,.75) 38%,transparent 75%); filter:brightness(1.22) contrast(1.18) saturate(.45); }
+.detail-meta { z-index:3; max-width:330px; justify-self:end; }
+.detail-meta h1 { margin:20px 0 46px; font:300 clamp(34px,4vw,58px)/1 "Songti SC", "STSong", serif; letter-spacing:.18em; }
+.detail-description { color:#999c9c; font:300 12px/2.15 "Songti SC", "STSong", serif; letter-spacing:.1em; }
+.detail-meta dl { margin:42px 0; border-top:1px solid var(--line); }
+.detail-meta dl div { display:grid; grid-template-columns:1fr 2fr; padding:12px 0; border-bottom:1px solid var(--line); font-size:9px; }
+.detail-meta dt { color:#5f6465; }
+.detail-meta dd { margin:0; color:#989c9d; }
+.view-modes { display:flex; gap:30px; padding:12px 0; border-bottom:1px solid var(--line); }
+.view-modes button { position:relative; color:#555a5b; font:300 13px/1 "Songti SC", "STSong", serif; letter-spacing:.14em; transition:color .4s; }
+.view-modes button.active { color:var(--bone); }
+.view-modes button.active::before { content:""; position:absolute; left:-10px; top:50%; width:3px; height:3px; border-radius:50%; background:var(--silver); }
+.interaction-hint { margin-top:24px; color:#5d6263; font-size:9px; letter-spacing:.16em; }
+.interaction-hint i { display:inline-block; width:5px; height:5px; margin-right:8px; border:1px solid #6f7678; border-radius:50%; animation:hintPulse 1.6s infinite; }
+@keyframes hintPulse { 50%{box-shadow:0 0 0 5px rgba(160,180,190,.08)} }
+.detail-position { position:absolute; left:var(--pad); bottom:38px; display:flex; align-items:center; gap:10px; color:#636768; font-size:8px; }
+.detail-position i { width:60px; height:1px; background:#454849; }
+
+.detail__stone[data-mode="trace"] .surface-base { filter:grayscale(1) brightness(.2) contrast(1.6); }
+.detail__stone[data-mode="trace"] .surface-light { filter:grayscale(1) brightness(1.65) contrast(1.8); }
+.detail__stone[data-mode="text"] .surface-base { filter:grayscale(1) brightness(.22) contrast(1.15); }
+.inscription-map { position:absolute; inset:8% 14%; opacity:0; display:flex; flex-direction:column; align-items:center; justify-content:space-evenly; color:#d2d9dc; font:300 clamp(12px,1.2vw,18px)/1 "Songti SC", "STSong", serif; letter-spacing:.35em; text-shadow:0 0 18px rgba(190,215,225,.7); transition:opacity .7s; writing-mode:vertical-rl; }
+.detail__stone[data-mode="text"] .inscription-map { opacity:.9; }
+
+
+.detail-after { min-height:62vh; padding:12vh var(--pad); background:#0b0d0e; display:flex; flex-direction:column; justify-content:space-between; }
+.detail-after > p { color:#5d6263; font-size:9px; letter-spacing:.2em; }
+.detail-after button { display:grid; grid-template-columns:80px 1fr auto; align-items:end; padding-bottom:20px; border-bottom:1px solid var(--line); text-align:left; }
+.detail-after button span { color:#666; font-size:10px; }
+.detail-after button strong { font:300 clamp(56px,10vw,150px)/1 "Songti SC", "STSong", serif; letter-spacing:.1em; }
+.detail-after button i { font-style:normal; font-size:24px; }
+
+.about-panel { position:fixed; inset:0; z-index:250; padding:15vh var(--pad) 8vh; display:grid; grid-template-columns:minmax(0,1fr) minmax(280px,.55fr) minmax(240px,.42fr); gap:5vw; background:#f1eee5 url("assets/backgrounds/about-paper.png") center/cover no-repeat; color:#111313; transform:translateY(102%); transition:transform 1s var(--ease); }
+.about-panel.is-open { transform:none; }
+.about-close { position:absolute; top:40px; right:var(--pad); color:#4c4f4f; font-size:10px; letter-spacing:.18em; }
+.about-panel h2 { margin:48px 0 0; font:300 clamp(48px,7.4vw,118px)/1.35 "Songti SC", "STSong", serif; letter-spacing:.06em; }
+.about-panel h2 .lettering-ready::after { filter:grayscale(1) brightness(.35); }
+.about-panel .eyebrow { color:#555; }
+.about-copy { grid-column:1; align-self:end; width:min(420px,100%); }
+.about-copy p { margin:0 0 26px; font:300 14px/2 "Songti SC", "STSong", serif; letter-spacing:.08em; }
+.about-copy span { display:block; margin-top:12vh; color:#5c6060; font-size:9px; letter-spacing:.2em; }
+
+.menu-drawer { position:fixed; z-index:220; inset:0; padding:100px var(--pad) 50px; background:#101213; transform:translateX(102%); transition:transform .9s var(--ease); }
+.menu-drawer.is-open { transform:none; }
+.drawer-close { position:absolute; right:var(--pad); top:32px; color:#888; font-size:10px; }
+.drawer-links { display:flex; flex-direction:column; border-top:1px solid var(--line); }
+.drawer-links button { padding:20px 0; border-bottom:1px solid var(--line); display:flex; gap:20px; font:300 30px/1.2 "Songti SC", "STSong", serif; }
+.drawer-links button span { color:#626667; font:400 9px/1 sans-serif; }
+.menu-drawer > p { position:absolute; left:var(--pad); bottom:50px; width:70%; color:#777; font:300 12px/1.8 "Songti SC", "STSong", serif; }
+
+.reveal { opacity:0; transform:translateY(36px); transition:opacity 1.2s var(--ease),transform 1.2s var(--ease); }
+.reveal.is-visible { opacity:1; transform:none; }
+
+.cursor { display:none; opacity:0; position:fixed; z-index:500; left:0; top:0; width:34px; height:34px; border:1px solid rgba(210,220,222,.45); border-radius:50%; pointer-events:none; transform:translate(-50%,-50%); transition:width .35s var(--ease),height .35s var(--ease),background .35s,opacity .25s; mix-blend-mode:difference; }
+.cursor i { position:absolute; width:3px; height:3px; left:50%; top:50%; transform:translate(-50%,-50%); background:#d6d6d0; border-radius:50%; }
+.cursor.is-hover { width:62px; height:62px; background:rgba(210,220,222,.13); }
+
+@media (pointer:fine) { body,button { cursor:none; } .cursor { display:block; } }
+
+@media (max-width: 800px) {
+  :root { --pad: 22px; }
+  .site-header { height:68px; grid-template-columns:1fr auto; }
+  .site-header nav, .edition, .sound-toggle { display:none; }
+  .header-side { display:block; }
+  .menu-button { display:block; }
+  .brand small { display:none; }
+  .hero__stone { width:100%; right:-30%; opacity:.88; }
+  .hero::after { background:linear-gradient(90deg,rgba(2,3,3,.72),transparent 65%); }
+  .hero__copy { bottom:14vh; }
+  .hero h1 { font-size:27vw; gap:.04em; }
+  .hero__note { font-size:10px; }
+  .hero__count { display:none; }
+  .scroll-cue { left:auto; right:var(--pad); transform:none; }
+  .surface-light { -webkit-mask-image:radial-gradient(circle 180px at var(--x) var(--y),#000,transparent 72%); mask-image:radial-gradient(circle 180px at var(--x) var(--y),#000,transparent 72%); }
+  .statement { grid-template-columns:1fr; gap:55px; min-height:auto; padding:18vh var(--pad); }
+  .statement__aside { padding-top:10vh; width:74%; margin-left:auto; }
+  .featured { grid-template-columns:1fr; gap:50px; }
+  .feature-card figure { height:66vh; }
+  .feature-card__meta { grid-template-columns:1fr 1fr; }
+  .feature-card__meta h2 { text-align:right; }
+  .feature-card__meta span:last-child { display:none; }
+  .feature-text { padding:0; }
+  .archive-invite { min-height:62vh; }
+  .works-intro { min-height:66vh; grid-template-columns:1fr; gap:50px; align-content:end; }
+  .works-grid { grid-template-columns:repeat(2,1fr); gap:90px 14px; }
+  .work { grid-column:auto !important; margin-top:0 !important; }
+  .work figure { height:47vh !important; }
+  .work:nth-child(2n) { margin-top:14vh !important; }
+  .work--4 { grid-column:1 / 3 !important; }
+  .work--4 figure { height:30vh !important; }
+  .work figcaption { grid-template-columns:auto 1fr; }
+  .work figcaption span:last-child { display:none; }
+  .detail-stage { display:block; min-height:auto; padding:14vh var(--pad) 10vh; }
+  .detail-back { top:82px; }
+  .detail-glyph { top:12vh; left:-9vw; font-size:75vw; }
+  .detail__stone { width:100%; height:66vh; margin:5vh 0 7vh; }
+  .detail-meta { max-width:none; }
+  .detail-meta h1 { margin-bottom:28px; }
+  .detail-position { display:none; }
+  .detail-after button { grid-template-columns:40px 1fr auto; }
+  .about-panel { grid-template-columns:1fr; gap:8vh; padding-top:12vh; overflow:auto; }
+  .about-panel h2 { font-size:14vw; }
+  .about-copy { align-self:start; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,*::before,*::after { scroll-behavior:auto !important; animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
+}

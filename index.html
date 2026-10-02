@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#070808" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23070808'/%3E%3Cpath d='M17 12h30v40H17z' fill='%23232729'/%3E%3Cpath d='M24 22h16M24 31h16M24 40h16' stroke='%23c7c7c0' stroke-width='2'/%3E%3C/svg%3E" />
+    <meta
+      name="description"
+      content="碑间，一座由痕迹、时间与光构成的线上作品现场。"
+    />
+    <title>碑间 BEIJIAN</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="stele-viewer.css?v=editorial1" />
+    <link rel="stylesheet" href="stele-editorial.css?v=editorial1" />
+    <link rel="stylesheet" href="name-experience.css?v=name1" />
+    <link rel="stylesheet" href="typography.css?v=beijian1" />
+    <link rel="stylesheet" href="experience.css?v=release1" />
+    <link rel="stylesheet" href="works-archive.css?v=cutout1" />
+    <link rel="stylesheet" href="glyph-field-embed.css?v=2" />
+    <link rel="stylesheet" href="xunzi-embed.css?v=1" />
+    <script type="importmap">
+      {"imports":{"three":"./vendor/three/build/three.module.js","three/addons/":"./vendor/three/examples/jsm/"}}
+    </script>
+  </head>
+  <body>
+    <div class="boot" aria-hidden="true">
+      <div class="boot__mark" data-lettering="碑间">碑间</div>
+      <div class="boot__line"><i></i></div>
+      <span>载入石的表面</span>
+    </div>
+
+    <div class="noise" aria-hidden="true"></div>
+    <div class="cursor" aria-hidden="true"><i></i></div>
+    <div class="transition" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <button class="brand route-link" data-route="home" aria-label="返回首页">
+        <span data-lettering="碑间">碑间</span><small>BEIJIAN</small>
+      </button>
+      <nav aria-label="主要导航">
+        <button class="route-link" data-route="works">作品</button>
+        <button class="route-link" data-route="detail" data-model="stele360">现场</button>
+        <button class="route-link" data-route="name">寻字</button>
+        <button class="about-trigger">关于</button>
+      </nav>
+      <div class="header-side">
+        <span class="edition">ED. 01</span>
+        <button class="sound-toggle" aria-label="切换环境声音" aria-pressed="false">
+          <i></i><i></i><i></i>
+        </button>
+        <button class="menu-button" aria-label="打开菜单"><i></i><i></i></button>
+      </div>
+    </header>
+
+    <aside class="menu-drawer" aria-hidden="true">
+      <button class="drawer-close" aria-label="关闭菜单">关闭</button>
+      <div class="drawer-links">
+        <button class="route-link" data-route="home"><span>01</span>入口</button>
+        <button class="route-link" data-route="works"><span>02</span>作品</button>
+        <button class="route-link" data-route="detail" data-model="stele360"><span>03</span>现场</button>
+        <button class="route-link" data-route="name"><span>04</span>寻字</button>
+        <button class="about-trigger"><span>05</span>关于</button>
+      </div>
+      <p>一座由痕迹、时间与光构成的线上作品现场。</p>
+    </aside>
+
+    <main>
+      <section class="page page--active" data-page="home">
+        <div class="hero">
+          <div class="hero__copy">
+            <p class="eyebrow">数字艺术项目</p>
+            <h1 data-lettering="碑间">碑间</h1>
+            <p class="hero__note">石不言<br />光替它显现</p>
+            <button class="hero__enter route-link" data-route="works">进入作品 <i data-lucide="arrow-right"></i></button>
+          </div>
+
+          <div class="light-surface hero__stone" data-light-surface>
+            <img class="surface-base" src="assets/hero-stone.png" alt="刻痕密布的黑色石碑局部" />
+            <img class="surface-light" src="assets/hero-stone.png" alt="" aria-hidden="true" />
+            <div class="surface-glow" aria-hidden="true"></div>
+          </div>
+
+          <button class="scroll-cue" aria-label="向下浏览">
+            <span>向下</span><i data-lucide="arrow-down"></i>
+          </button>
+        </div>
+
+        <section class="statement reveal">
+          <p class="section-index">01 / 痕迹</p>
+          <blockquote>
+            被刻下的并不是一句话<br />而是时间穿过物质的方式
+          </blockquote>
+          <div class="statement__aside">
+            <p>碑间不是历史的复制。</p>
+            <p>它让虚构的石、无法辨认的文字与移动的光，在屏幕上形成另一种遗址。</p>
+          </div>
+        </section>
+
+        <section class="editorial-screen editorial-screen--rubbing" aria-label="墨拓回声">
+          <div class="editorial-copy">
+            <p class="editorial-index">02 / 墨拓</p>
+            <h2><span>RUBBING /</span><br />ECHO</h2>
+            <i class="editorial-rule" aria-hidden="true"></i>
+            <p class="editorial-lead">墨拓所存，是碑之回声。</p>
+            <p class="editorial-body">碑拓不止于复制，而是以纸为舟，承接石上之墨，让历经岁月的文字与记忆，在另一种材质中继续传递。</p>
+            <p class="editorial-translation">Ink holds<br />what stone still says.</p>
+          </div>
+          <figure class="editorial-monument editorial-monument--rubbing">
+            <img src="assets/home/rubbing-stele.png" alt="刻有铭文、边缘残损的灰石碑" />
+          </figure>
+          <aside class="editorial-aside">
+            <div class="editorial-mark"><span>碑<br />拓</span><i aria-hidden="true"></i></div>
+            <figure class="editorial-detail">
+              <img src="assets/works/stele/fracture-v1.webp" alt="石碑表面拓印与断痕的细节" loading="lazy" />
+              <figcaption>拓片细节</figcaption>
+            </figure>
+            <p class="editorial-aside-note">纸承其墨，<br />墨续其声。</p>
+          </aside>
+          <footer class="editorial-footer"><span>BEIJIAN　/　XI’AN　/　CHINA</span><span>STONE　/　MEMORY　/　HUMANITY</span></footer>
+        </section>
+
+        <section class="editorial-screen editorial-screen--silence" aria-label="碑林静默">
+          <div class="editorial-copy">
+            <p class="editorial-index">03 / 碑林</p>
+            <h2><span>STELE /</span><br />SILENCE</h2>
+            <i class="editorial-rule" aria-hidden="true"></i>
+            <p class="editorial-lead">碑之静，亦是时间之声。</p>
+            <p class="editorial-body">石头保存了时间的痕迹，文字承载人类的记忆。碑不只是一件石物，更是穿越时光的见证。</p>
+            <p class="editorial-translation">Stone remembers<br />what time lets go.</p>
+          </div>
+          <figure class="editorial-monument editorial-monument--silence">
+            <img src="assets/archive-room/fragment-cutout-v2.png" alt="边缘破损、刻有纹饰的残碑" />
+          </figure>
+          <aside class="editorial-aside">
+            <div class="editorial-mark"><span>碑<br />林</span><i aria-hidden="true"></i></div>
+            <figure class="editorial-detail">
+              <img src="assets/works/fragment/inscription-v2.webp" alt="残碑表面的石刻细节" loading="lazy" />
+              <figcaption>碑面细节</figcaption>
+              <small>DETAIL</small>
+            </figure>
+            <p class="editorial-aside-note">石存其形，<br />字留其意。</p>
+          </aside>
+          <footer class="editorial-footer"><span>BEIJIAN　/　XI’AN　/　CHINA</span><span>STONE　/　MEMORY　/　HUMANITY</span></footer>
+        </section>
+
+        <section class="archive-invite reveal">
+          <p>石上留下的痕迹<br />构成一个正在生成的档案</p>
+          <button class="route-link arrow-link" data-route="works">进入碑间 <i>↗</i></button>
+          <button class="route-link name-home-link" data-route="name">寻字成拓 <i data-lucide="arrow-up-right"></i></button>
+        </section>
+
+      </section>
+
+      <section class="page works-page archive-catalog" data-page="works" data-archive-room aria-hidden="true">
+        <div class="works-module works-module--archive is-current-module" data-works-module="archive">
+        <div class="archive-atmosphere" aria-hidden="true"></div>
+        <div class="archive-scene scene" aria-label="碑间作品档案室">
+          <div class="archive-scene__inner">
+            <div class="archive-floor" aria-hidden="true"></div>
+            <div class="archive-objects" aria-label="选择一件作品进入现场">
+              <button class="work archive-object archive-object--stele route-link" data-object data-depth="0.58" data-route="detail" data-model="stele360" aria-label="进入巡碑现场">
+                <figure class="object-drift"><img src="assets/archive-room/stele-cutout-v2.png" alt="作品《巡碑》" draggable="false" /></figure>
+                <figcaption><b>01</b><strong>巡碑</strong><span>C. 618</span><span>砂岩 / SUI</span><span class="work-year">2026</span></figcaption>
+              </button>
+              <button class="work archive-object archive-object--floral route-link" data-object data-depth="0.76" data-route="detail" data-model="floral360" aria-label="进入花碣现场">
+                <figure class="object-drift"><img src="assets/archive-room/floral-cutout-v2.png" alt="作品《花碣》" draggable="false" /></figure>
+                <figcaption><b>02</b><strong>花碣</strong><span>C. 742</span><span>玄武岩 / TANG</span><span class="work-year">2026</span></figcaption>
+              </button>
+              <button class="work archive-object archive-object--dragon route-link is-featured" data-object data-depth="1.08" data-route="detail" data-model="dragon360" aria-label="进入龙首现场">
+                <figure class="object-drift"><img src="assets/archive-room/dragon-cutout-v2.png" alt="作品《龙首》" draggable="false" /></figure>
+                <figcaption><b>03</b><strong>龙首</strong><span>C. 870</span><span>石灰岩 / TANG</span><span class="work-year">2026</span></figcaption>
+              </button>
+              <button class="work archive-object archive-object--head route-link" data-object data-depth="0.62" data-route="detail" data-model="head360" aria-label="进入碑首现场">
+                <figure class="object-drift"><img src="assets/archive-room/head-cutout-v2.png" alt="作品《碑首》" draggable="false" /></figure>
+                <figcaption><b>04</b><strong>碑首</strong><span>C. 960</span><span>花岗岩 / SONG</span><span class="work-year">2026</span></figcaption>
+              </button>
+              <button class="work archive-object archive-object--fragment route-link" data-object data-depth="0.88" data-route="detail" data-model="fragment360" aria-label="进入残碑现场">
+                <figure class="object-drift"><img src="assets/archive-room/fragment-cutout-v2.png" alt="作品《残碑》" draggable="false" /></figure>
+                <figcaption><b>05</b><strong>残碑</strong><span>C. 1368</span><span>石灰岩 / MING</span><span class="work-year">2021</span></figcaption>
+              </button>
+            </div>
+            <aside class="archive-detail archive-detail--dragon" data-depth="0.12" aria-hidden="true">
+              <div><img src="assets/archive-room/dragon-cutout-v2.png" alt="" /></div><span>03 / 细部</span>
+            </aside>
+            <aside class="archive-detail archive-detail--floral" data-depth="0.1" aria-hidden="true">
+              <div><img src="assets/archive-room/floral-cutout-v2.png" alt="" /></div><span>02 / 纹理</span>
+            </aside>
+            <div class="scene-caption" data-depth="0.34">
+              <i></i><p>当前观看 <strong>03 / 05</strong></p><small>点击展品，进入现场</small>
+            </div>
+          </div>
+        </div>
+        <footer class="archive-catalog__footer">
+          <span>BEIJIAN / DIGITAL STONE ARCHIVE</span>
+          <div class="progress" aria-label="当前展品"><i></i><i></i><i class="is-active"></i><i></i><i></i></div>
+          <span>2026 · FICTIONAL OBJECTS</span>
+        </footer>
+        </div>
+        <section class="works-module works-module--glyph" data-works-module="glyph" aria-hidden="true" inert>
+          <iframe class="glyph-field-frame" src="about:blank" title="碑间石雕文字场互动"></iframe>
+        </section>
+      </section>
+
+      <section class="page name-gateway" data-page="name-gateway" aria-hidden="true" aria-label="寻字入口">
+        <div class="name-entry">
+          <img class="name-entry__image" src="assets/name/entry-stone.png" alt="纸张从黑色石面轻轻揭起，王字在侧光下显现" loading="lazy" />
+          <div class="name-entry__copy">
+            <p class="name-kicker">字形索引 / 第四页</p>
+            <h1 data-lettering="寻字">寻字</h1>
+            <p class="name-entry__line">在碑间找到你的字</p>
+            <button class="route-link name-gateway__enter" data-route="name">进入寻字体验 <i data-lucide="arrow-right"></i></button>
+            <p class="name-provenance">字形演绎 / 非原碑拓片</p>
+          </div>
+          <div class="name-gateway__footer"><span>04 / 寻字</span><span>点击进入后，可完整体验寻字与成拓</span></div>
+        </div>
+      </section>
+
+      <section class="page detail-page" data-page="detail" data-work="stele360" data-work-number="01" aria-hidden="true">
+        <div class="detail-stage" id="work-overview">
+          <button class="detail-back route-link" data-route="works">← 返回作品</button>
+          <div class="detail-glyph" aria-hidden="true">痕</div>
+
+          <div class="light-surface detail__stone" data-light-surface>
+            <img class="surface-base" src="assets/works/stele/cover-v1.webp" alt="作品《巡碑》全貌" />
+            <img class="surface-light" src="assets/works/stele/cover-v1.webp" alt="" aria-hidden="true" />
+            <div class="surface-glow" aria-hidden="true"></div>
+            <div class="inscription-map" aria-hidden="true">
+              <span>光从石面经过</span><span>凹陷短暂显现</span><span>时间没有被解释</span>
+            </div>
+            <button class="image-expand" data-gallery-index="0" title="放大作品图" aria-label="放大作品图"><i data-lucide="expand"></i></button>
+          </div>
+
+          <aside class="detail-meta">
+            <p class="eyebrow">NO. 001</p>
+            <h1 data-lettering="巡碑">巡碑</h1>
+            <p class="detail-description">
+              双兽相向，云纹绕额。竖列刻字穿过断裂的石面，磨损的边缘留住时间。
+            </p>
+            <dl>
+              <div><dt>年份</dt><dd>2026</dd></div>
+              <div><dt>材质</dt><dd>灰石 · 数字重构</dd></div>
+              <div><dt>尺寸</dt><dd>243 × 120 × 57 cm</dd></div>
+            </dl>
+            <div class="view-modes" role="group" aria-label="观看模式">
+              <button class="active" data-mode="original" aria-pressed="true">原貌</button>
+              <button data-mode="trace" aria-pressed="false">刻痕</button>
+              <button data-mode="text" aria-pressed="false">释文</button>
+            </div>
+            <p class="interaction-hint"><i></i> 概念石刻 · 2026</p>
+            <div class="detail-actions">
+              <button data-detail-target="work-details">观看细部 <i data-lucide="arrow-down"></i></button>
+              <button data-detail-target="work-orbit" data-start-orbit>环绕观看 <i data-lucide="rotate-3d"></i></button>
+            </div>
+          </aside>
+
+          <div class="detail-position"><span>01</span><i></i><span>05</span></div>
+        </div>
+
+        <nav class="work-chapters" aria-label="作品章节">
+          <button data-detail-target="work-overview"><span>01</span>全貌</button>
+          <button data-detail-target="work-details"><span>02</span>细部</button>
+          <button data-detail-target="work-orbit" data-orbit-chapter><span>03</span>环绕</button>
+          <span class="work-chapters__edition">巡碑 / 2026</span>
+        </nav>
+
+        <section class="work-details" id="work-details" aria-labelledby="details-title">
+          <header class="work-section-heading reveal">
+            <div><p class="section-index">02 / 细部</p><h2 id="details-title" data-lettering="字与石之间">字与石之间</h2></div>
+            <p>一笔留下，<br />另一笔被时间带走。</p>
+          </header>
+          <div class="detail-diptych">
+            <figure class="detail-study detail-study--crest reveal">
+              <button class="detail-image" data-gallery-index="1" title="放大碑额细节" aria-label="放大碑额细节">
+                <img src="assets/works/stele/crest-v1.webp" alt="巡碑的圆拱碑额，侧光显出双兽与云纹" loading="lazy" width="1536" height="1024" />
+                <span class="image-expand" aria-hidden="true"><i data-lucide="expand"></i></span>
+              </button>
+              <figcaption><span>01 / 碑额</span><p>双兽相向，守住一段无声的文字。</p></figcaption>
+            </figure>
+            <figure class="detail-study detail-study--fracture reveal">
+              <button class="detail-image" data-gallery-index="2" title="放大刻痕细节" aria-label="放大刻痕细节">
+                <img src="assets/works/stele/fracture-v1.webp" alt="巡碑碑文与斜向裂隙的近距离细节" loading="lazy" width="1024" height="1365" />
+                <span class="image-expand" aria-hidden="true"><i data-lucide="expand"></i></span>
+              </button>
+              <figcaption><span>02 / 断痕</span><p>裂隙穿过字行，石仍然完整。</p></figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <section class="orbit-section stele-only" id="work-orbit" aria-labelledby="orbit-title">
+          <header class="work-section-heading reveal">
+            <div><p class="section-index">03 / 环绕</p><h2 id="orbit-title" data-lettering="石的另一面">石的另一面</h2></div>
+          </header>
+          <div class="artifact-viewer artifact--webgl" data-artifact-viewer aria-label="巡碑三维展品" aria-busy="false">
+            <img class="artifact-poster" src="assets/works/stele/cover-v1.webp" alt="巡碑石刻" loading="lazy" />
+            <button class="artifact-start" data-viewer-start><i data-lucide="rotate-3d"></i><span>开启环绕</span></button>
+            <div class="artifact-status" role="status">展品载入中</div>
+            <div class="artifact-toolbar" role="toolbar" aria-label="展品控制">
+              <button data-viewer-action="reset" title="复位" aria-label="复位"><i data-lucide="rotate-ccw"></i></button>
+              <button data-viewer-action="rotate" title="自动旋转" aria-label="自动旋转" aria-pressed="false"><i data-lucide="play"></i></button>
+              <span></span>
+              <button data-viewer-action="zoom-in" title="放大" aria-label="放大"><i data-lucide="zoom-in"></i></button>
+              <button data-viewer-action="zoom-out" title="缩小" aria-label="缩小"><i data-lucide="zoom-out"></i></button>
+              <button data-viewer-action="fullscreen" title="全屏" aria-label="全屏"><i data-lucide="maximize"></i></button>
+              <button data-viewer-action="close" title="结束环绕" aria-label="结束环绕"><i data-lucide="x"></i></button>
+            </div>
+          </div>
+          <div class="orbit-colophon"><span>巡碑 · 灰石 / 数字重构</span><span>243 × 120 × 57 cm</span></div>
+        </section>
+
+        <section class="orbit-section fragment-only" id="fragment-orbit" aria-labelledby="fragment-orbit-title">
+          <header class="work-section-heading reveal">
+            <div><p class="section-index">残碑 / 环绕</p><h2 id="fragment-orbit-title" data-lettering="石的另一面">石的另一面</h2></div>
+          </header>
+          <div class="artifact-viewer artifact--webgl" data-artifact-viewer data-model-src="assets/models/fragment/web/fragment.gltf" data-model-rotation="-1.5707963267948966" aria-label="残碑，可旋转和缩放的三维石刻" aria-busy="false">
+            <img class="artifact-poster" src="assets/works/fragment/cover-v2.webp" alt="残碑三维石刻" loading="lazy" />
+            <button class="artifact-start" data-viewer-start><i data-lucide="rotate-3d"></i><span>开启环绕</span></button>
+            <div class="artifact-status" role="status">展品载入中</div>
+            <div class="artifact-toolbar" role="toolbar" aria-label="残碑控制">
+              <button data-viewer-action="reset" title="复位" aria-label="复位"><i data-lucide="rotate-ccw"></i></button>
+              <button data-viewer-action="rotate" title="自动旋转" aria-label="自动旋转" aria-pressed="false"><i data-lucide="play"></i></button>
+              <span></span>
+              <button data-viewer-action="zoom-in" title="放大" aria-label="放大"><i data-lucide="zoom-in"></i></button>
+              <button data-viewer-action="zoom-out" title="缩小" aria-label="缩小"><i data-lucide="zoom-out"></i></button>
+              <button data-viewer-action="fullscreen" title="全屏" aria-label="全屏"><i data-lucide="maximize"></i></button>
+              <button data-viewer-action="close" title="结束环绕" aria-label="结束环绕"><i data-lucide="x"></i></button>
+            </div>
+          </div>
+          <div class="orbit-colophon"><span>残碑 · 刻石 / 数字重构</span><span>2021</span></div>
+        </section>
+
+        <section class="orbit-section head-only" id="head-orbit" aria-labelledby="head-orbit-title">
+          <header class="work-section-heading reveal">
+            <div><p class="section-index">碑首 / 环绕</p><h2 id="head-orbit-title" data-lettering="石的另一面">石的另一面</h2></div>
+          </header>
+          <div class="artifact-viewer artifact--webgl" data-artifact-viewer data-model-src="assets/models/head/web/head.gltf" data-camera-azimuth="0.65" data-camera-elevation="0.32" data-camera-fit="1.35" data-mobile-camera-fit="0.95" data-exposure="0.78" aria-label="碑首，可旋转和缩放的三维石刻" aria-busy="false">
+            <img class="artifact-poster" src="assets/works/head/cover-v1.webp" alt="碑首盘龙浮雕" loading="lazy" />
+            <button class="artifact-start" data-viewer-start><i data-lucide="rotate-3d"></i><span>开启环绕</span></button>
+            <div class="artifact-status" role="status">展品载入中</div>
+            <div class="artifact-toolbar" role="toolbar" aria-label="碑首控制">
+              <button data-viewer-action="reset" title="复位" aria-label="复位"><i data-lucide="rotate-ccw"></i></button>
+              <button data-viewer-action="rotate" title="自动旋转" aria-label="自动旋转" aria-pressed="false"><i data-lucide="play"></i></button>
+              <span></span>
+              <button data-viewer-action="zoom-in" title="放大" aria-label="放大"><i data-lucide="zoom-in"></i></button>
+              <button data-viewer-action="zoom-out" title="缩小" aria-label="缩小"><i data-lucide="zoom-out"></i></button>
+              <button data-viewer-action="fullscreen" title="全屏" aria-label="全屏"><i data-lucide="maximize"></i></button>
+              <button data-viewer-action="close" title="结束环绕" aria-label="结束环绕"><i data-lucide="x"></i></button>
+            </div>
+          </div>
+          <div class="orbit-colophon"><span>碑首 · 刻石 / 数字重构</span><span>2026</span></div>
+        </section>
+
+        <section class="orbit-section dragon-only" id="dragon-orbit" aria-labelledby="dragon-orbit-title">
+          <header class="work-section-heading reveal">
+            <div><p class="section-index">龙首 / 环绕</p><h2 id="dragon-orbit-title" data-lettering="石的另一面">石的另一面</h2></div>
+          </header>
+          <div class="artifact-viewer artifact--webgl" data-artifact-viewer data-model-src="assets/models/dragon/dragon.glb" data-model-rotation="-1.5707963267948966" data-camera-azimuth="0.45" data-camera-elevation="0.2" data-camera-fit="1.2" data-mobile-camera-fit="1" data-exposure="0.75" aria-label="龙首，可旋转和缩放的三维石刻" aria-busy="false">
+            <img class="artifact-poster" src="assets/works/dragon/cover-v1.webp" alt="龙首石刻" loading="lazy" />
+            <button class="artifact-start" data-viewer-start><i data-lucide="rotate-3d"></i><span>开启环绕</span></button>
+            <div class="artifact-status" role="status">展品载入中</div>
+            <div class="artifact-toolbar" role="toolbar" aria-label="龙首控制">
+              <button data-viewer-action="reset" title="复位" aria-label="复位"><i data-lucide="rotate-ccw"></i></button>
+              <button data-viewer-action="rotate" title="自动旋转" aria-label="自动旋转" aria-pressed="false"><i data-lucide="play"></i></button>
+              <span></span>
+              <button data-viewer-action="zoom-in" title="放大" aria-label="放大"><i data-lucide="zoom-in"></i></button>
+              <button data-viewer-action="zoom-out" title="缩小" aria-label="缩小"><i data-lucide="zoom-out"></i></button>
+              <button data-viewer-action="fullscreen" title="全屏" aria-label="全屏"><i data-lucide="maximize"></i></button>
+              <button data-viewer-action="close" title="结束环绕" aria-label="结束环绕"><i data-lucide="x"></i></button>
+            </div>
+          </div>
+          <div class="orbit-colophon"><span>龙首 · 刻石 / 数字重构</span><span>2026</span></div>
+        </section>
+
+        <section class="orbit-section floral-only" id="floral-orbit" aria-labelledby="floral-orbit-title">
+          <header class="work-section-heading reveal">
+            <div><p class="section-index">花碣 / 环绕</p><h2 id="floral-orbit-title" data-lettering="石的另一面">石的另一面</h2></div>
+          </header>
+          <div class="artifact-viewer artifact--webgl" data-artifact-viewer data-model-src="assets/models/floral/web/floral.gltf" data-camera-azimuth="0.18" data-camera-elevation="0.105" data-exposure="1.15" aria-label="花碣，可旋转和缩放的三维石刻" aria-busy="false">
+            <img class="artifact-poster" src="assets/works/floral/cover-v1.webp" alt="花碣花鸟石刻" loading="lazy" />
+            <button class="artifact-start" data-viewer-start><i data-lucide="rotate-3d"></i><span>开启环绕</span></button>
+            <div class="artifact-status" role="status">展品载入中</div>
+            <div class="artifact-toolbar" role="toolbar" aria-label="花碣控制">
+              <button data-viewer-action="reset" title="复位" aria-label="复位"><i data-lucide="rotate-ccw"></i></button>
+              <button data-viewer-action="rotate" title="自动旋转" aria-label="自动旋转" aria-pressed="false"><i data-lucide="play"></i></button>
+              <span></span>
+              <button data-viewer-action="zoom-in" title="放大" aria-label="放大"><i data-lucide="zoom-in"></i></button>
+              <button data-viewer-action="zoom-out" title="缩小" aria-label="缩小"><i data-lucide="zoom-out"></i></button>
+              <button data-viewer-action="fullscreen" title="全屏" aria-label="全屏"><i data-lucide="maximize"></i></button>
+              <button data-viewer-action="close" title="结束环绕" aria-label="结束环绕"><i data-lucide="x"></i></button>
+            </div>
+          </div>
+          <div class="orbit-colophon"><span>花碣 · 刻石 / 数字重构</span><span>2026</span></div>
+        </section>
+
+        <section class="detail-after reveal">
+          <p>下一件作品</p>
+          <button data-next-work>
+            <span>02</span><strong data-lettering="残碑">残碑</strong><i>↗</i>
+          </button>
+        </section>
+      </section>
+      <section class="page name-page" data-page="name" aria-hidden="true" aria-label="寻字">
+        <button class="route-link name-exit" data-route="name-gateway">← 返回展览</button>
+        <iframe class="name-experience-frame" src="xunzi/beijian-name-complete-20260924/index.html?embed=site" title="碑间寻字：择形、制拓与结果" allow="clipboard-write"></iframe>
+      </section>
+    </main>
+
+    <dialog class="image-dialog" aria-label="作品图像">
+      <header><p class="image-dialog__caption">巡碑 / 全貌</p><div>
+        <span class="image-dialog__count">01 / 03</span>
+        <button data-gallery-prev title="上一张" aria-label="上一张"><i data-lucide="arrow-left"></i></button>
+        <button data-gallery-next title="下一张" aria-label="下一张"><i data-lucide="arrow-right"></i></button>
+        <button data-gallery-close title="关闭图像" aria-label="关闭图像"><i data-lucide="x"></i></button>
+      </div></header>
+      <img src="assets/works/stele/cover-v1.webp" alt="巡碑全貌" />
+    </dialog>
+
+    <section class="about-panel" aria-hidden="true">
+      <button class="about-close">关闭</button>
+      <div>
+        <p class="eyebrow">关于碑间</p>
+        <h2><span data-lettering="一座不存在">一座不存在</span><span data-lettering="的遗址">的遗址</span></h2>
+      </div>
+      <div class="about-copy">
+        <p>项目以生成图像、网页光线与虚构档案为材料，讨论文字如何依附于物质，又如何被时间擦除。</p>
+        <p>这里的每一块碑都没有真实出处。它们只在观看发生时短暂存在。</p>
+        <span>数字艺术项目 · 2026</span>
+      </div>
+    </section>
+
+    <script src="lettering.js?v=beijian1"></script>
+    <script src="app.js?v=release1"></script>
+    <script src="vendor/gsap/gsap.min.js"></script>
+    <script src="vendor/gsap/ScrollTrigger.min.js"></script>
+    <script src="experience.js?v=release1"></script>
+    <script src="archive-room.js?v=catalog3"></script>
+    <script src="vendor/lucide.min.js"></script>
+    <script type="module" src="stele-viewer.js?v=public1"></script>
+  </body>
+</html>

@@ -1,0 +1,29 @@
+.artifact-viewer.artifact--webgl {
+  position: relative; z-index: 2; justify-self: center;
+  overflow: hidden; touch-action: none; user-select: none;
+  width: 100%; height: 79svh; min-height: 520px; max-height: 960px;
+  display: block; isolation: isolate; cursor: grab; letter-spacing: 0;
+}
+.artifact--webgl::before { display: none; }
+.artifact--webgl:active { cursor: grabbing; }
+.artifact--webgl canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; outline: none; }
+.artifact--webgl canvas:focus-visible { outline: 1px solid #9eaaa8; outline-offset: -3px; }
+.artifact-poster { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; opacity: .65; }
+.artifact--webgl.is-ready .artifact-poster { display: none; }
+.artifact-status { position: absolute; z-index: 2; bottom: 82px; left: 12px; right: 12px; text-align: center; font-size: 12px; color: #bcc2bf; }
+.artifact--webgl.is-ready .artifact-status { display: none; }
+.artifact-toolbar { position: absolute; z-index: 3; bottom: 16px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 6px; padding: 6px; border-bottom: 1px solid #373c3a; background: #0c0e0ee8; }
+.artifact-toolbar button { display: grid; place-items: center; flex: 0 0 40px; width: 40px; height: 40px; color: #a3aaa6; cursor: pointer; border-radius: 3px; }
+.artifact-toolbar button:hover, .artifact-toolbar button[aria-pressed="true"] { color: #e4e6dd; background: #2d3330; }
+.artifact-toolbar button:focus-visible { outline: 1px solid #ccd5cd; }
+.artifact-toolbar svg { width: 18px; height: 18px; stroke-width: 1.5; }
+.artifact-toolbar > span { width: 1px; height: 18px; background: #424944; margin: 0 3px; }
+.artifact--webgl:not(.is-ready) .artifact-toolbar { visibility: hidden; }
+.artifact--webgl:fullscreen { width: 100vw; height: 100svh; max-height: none; margin: 0; background: #0c0e0e; }
+.about-panel[aria-hidden="true"] { visibility: hidden; pointer-events: none; }
+@media (max-width: 700px) {
+  .artifact-viewer.artifact--webgl { height: 65svh; min-height: 420px; max-height: 650px; margin: 20px 0 32px; }
+  .artifact-toolbar { bottom: 0; }
+  .artifact-toolbar button { width: 38px; height: 38px; flex-basis: 38px; }
+  .artifact--webgl:fullscreen { height: 100svh; max-height: none; margin: 0; }
+}

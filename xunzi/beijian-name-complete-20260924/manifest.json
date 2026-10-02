@@ -1,0 +1,181 @@
+{
+  "package": "碑间·寻字完全体",
+  "version": "2026-09-24",
+  "files": [
+    {
+      "file": "assets/name/coverage.json",
+      "bytes": 83464,
+      "sha256": "5babeded52a0efc43628f9d2ae06548b8187dcdb98e3a8912e68b08e18f60cda"
+    },
+    {
+      "file": "assets/name/entry-stone.png",
+      "bytes": 2734444,
+      "sha256": "107fcda32eb318213d6592f639ecc3a7391ecc3bfc31939f958ce57ab27e8337"
+    },
+    {
+      "file": "assets/name/fonts/longcang-OFL.txt",
+      "bytes": 4390,
+      "sha256": "603546b7219a94bb59bf8294458194a5010119486354092b66a09a3fd61aeacc"
+    },
+    {
+      "file": "assets/name/fonts/LongCang-Regular.woff2",
+      "bytes": 2944592,
+      "sha256": "1e32cf3391b17faba613ccf104478e8500d54dbec87c4ebc499f520ef59edf09"
+    },
+    {
+      "file": "assets/name/fonts/mashanzheng-OFL.txt",
+      "bytes": 4397,
+      "sha256": "d7bdb1cee215b689e23c2f95672a6084c790542170648267a55114103d756a08"
+    },
+    {
+      "file": "assets/name/fonts/MaShanZheng-Regular.woff2",
+      "bytes": 3250296,
+      "sha256": "04bf92325b57275e8c58caedbd0e8c805bb34ec4cc84655a2a39c48174447a78"
+    },
+    {
+      "file": "assets/name/fonts/zcoolxiaowei-OFL.txt",
+      "bytes": 4400,
+      "sha256": "a094514ca57cf8f9c5e8d8d1adab5d8cd3a377297ff016f9df2c05b3ecd77f0a"
+    },
+    {
+      "file": "assets/name/fonts/ZCOOLXiaoWei-Regular.woff2",
+      "bytes": 2632932,
+      "sha256": "7efbd7b848587215372a6954251d22c25bbffbef5063d419b819291cdb3acad3"
+    },
+    {
+      "file": "assets/name/fonts/zhimangxing-OFL.txt",
+      "bytes": 4397,
+      "sha256": "10947328199e369a3e6b4a67e8e5507ed99d5bbb264a1f156415aa9b665e4d15"
+    },
+    {
+      "file": "assets/name/fonts/ZhiMangXing-Regular.woff2",
+      "bytes": 2300800,
+      "sha256": "74ce13140fd1cd0d8d599ca7838ca9a645fc723601d0d3f70afe915a22efb093"
+    },
+    {
+      "file": "assets/name/materials/paper-antique.webp",
+      "bytes": 284944,
+      "sha256": "cc346d5ae66c2c5d0b22478b9c0f06a3181e160aa594a9e63351dcfbd211e5c5"
+    },
+    {
+      "file": "assets/name/materials/paper-cicada.webp",
+      "bytes": 239910,
+      "sha256": "e8dc6d39e8c087e599c7c929104386659703b1e62bdcb3056d73cbbbd6832b3a"
+    },
+    {
+      "file": "assets/name/materials/paper-coarse.webp",
+      "bytes": 503460,
+      "sha256": "30acc3c5fc0deb6dd2f4eb647aff6bd5e5f4dcc255244413bf0aad7c7ba4d1f6"
+    },
+    {
+      "file": "assets/name/materials/paper-cotton.webp",
+      "bytes": 371130,
+      "sha256": "179fef7f17a904adcc21b5f54012d87edd4f88a99ee0f2135c0f15dfdfccfaaa"
+    },
+    {
+      "file": "assets/name/materials/paper-cracked.webp",
+      "bytes": 276954,
+      "sha256": "8e41405d9552584bd1f779bcc2daaf9b00c46f9353fe643e087c4e6dfd5513e7"
+    },
+    {
+      "file": "assets/name/materials/paper-raw.webp",
+      "bytes": 204962,
+      "sha256": "ac7b24b14a01d9fc666718f8267580daa3a3d1b780a8144be286d93d72261b95"
+    },
+    {
+      "file": "assets/name/materials/stone-bluestone.webp",
+      "bytes": 509776,
+      "sha256": "6027db07326049b84a7eed7aec2e9bee4d357d0b23b112b687d615b54918f12d"
+    },
+    {
+      "file": "assets/name/materials/stone-granite.webp",
+      "bytes": 657800,
+      "sha256": "a85effdceb7d43f60052fedf2908f6fa17bd0c89a99c5a002e285b82c6b3e3e0"
+    },
+    {
+      "file": "assets/name/materials/stone-marble.webp",
+      "bytes": 64784,
+      "sha256": "6e8144acc992e281fda060535e19ab41e3981fb4a44d89d5e1b902bc7a60e933"
+    },
+    {
+      "file": "assets/name/materials/stone-sandstone.webp",
+      "bytes": 629126,
+      "sha256": "90ac983316294fd73dd867e7414f4a0a50bf5a93e290ec8075a68590223eb83e"
+    },
+    {
+      "file": "assets/name/materials/stone-weathered.webp",
+      "bytes": 638958,
+      "sha256": "78acf866c81e28b1b79eed1eebc93d240c0e19228be29c1a80b01a5e8c74f43f"
+    },
+    {
+      "file": "assets/name/profiles.json",
+      "bytes": 14329,
+      "sha256": "4c7a30dec3f8a35139571188ae987b36154f07d9e1314f34fc2f33cd2a4cadba"
+    },
+    {
+      "file": "assets/name/README.md",
+      "bytes": 3755,
+      "sha256": "e89f5a26775278a16d959482076b2dcc24abc86f4c0869def2f2daabece39eaa"
+    },
+    {
+      "file": "assets/surface-02.png",
+      "bytes": 3118047,
+      "sha256": "16fa6a647c8375585c6847155d81ee1d1013360e27e52ae2c7df629b6615db82"
+    },
+    {
+      "file": "index.html",
+      "bytes": 1454,
+      "sha256": "ae8c57d6ebc24ea42078c4d6598ec77ba640c5d33136b432368cd71baa76516b"
+    },
+    {
+      "file": "name-core.js",
+      "bytes": 4095,
+      "sha256": "ca466e9f3c3479acd5a7decd2698c832ef7540f871e43dc36c3a6c55852c2c4e"
+    },
+    {
+      "file": "name-experience.css",
+      "bytes": 26958,
+      "sha256": "3fa93cfb0b996ce91af7192d923b273e7c10caa9e64a8e2fb4fc2141d7d53452"
+    },
+    {
+      "file": "name-experience.js",
+      "bytes": 27177,
+      "sha256": "82d02398a57c53cc87b34a79ae5a48604ab448608eb25fc3fa854af933b63d9c"
+    },
+    {
+      "file": "name-finish.js",
+      "bytes": 11164,
+      "sha256": "028cf32a2d8d9e24771596ccbec458e1e51673daa07857a2e2a2cabf950ef630"
+    },
+    {
+      "file": "name-loader.js",
+      "bytes": 816,
+      "sha256": "5e649b8cd55de4248d11848c4d912e335b9ab3a3cf4c29307d7fc05c943eaeac"
+    },
+    {
+      "file": "preview-server.cjs",
+      "bytes": 1129,
+      "sha256": "d9c473d4066155b66420a43f3f28384cb81f8ca35f078d219a554da1e0d77d4f"
+    },
+    {
+      "file": "README.md",
+      "bytes": 2068,
+      "sha256": "2dc816a9d6c3d0193352ba886e2ff1bd68eada280b2b978f9628a1cf18d4cae7"
+    },
+    {
+      "file": "standalone.css",
+      "bytes": 1358,
+      "sha256": "8e2f86680019a231c5a7dbed8bc20e94530e3ba769f8dacfb0b428f88c86f9e7"
+    },
+    {
+      "file": "typography.css",
+      "bytes": 13001,
+      "sha256": "08a8707b6e35595211ed5ec2665f053a3b82d3e4513acd3da37f5853008dce76"
+    },
+    {
+      "file": "vendor/lucide.min.js",
+      "bytes": 397450,
+      "sha256": "ab85225ecc1daa2033607856f03dd2dabcbc08e2d260a5b97e17c690aa929766"
+    }
+  ]
+}
