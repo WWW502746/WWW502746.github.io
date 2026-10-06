@@ -9,16 +9,17 @@
       name="description"
       content="碑间，一座由痕迹、时间与光构成的线上作品现场。"
     />
-    <title>碑间 BEIJIAN</title>
+    <title>碑间 BEIJIAN · V4</title>
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="stele-viewer.css?v=editorial1" />
     <link rel="stylesheet" href="stele-editorial.css?v=editorial1" />
-    <link rel="stylesheet" href="name-experience.css?v=name1" />
+    <link rel="stylesheet" href="name-experience.css?v=v4" />
     <link rel="stylesheet" href="typography.css?v=beijian1" />
     <link rel="stylesheet" href="experience.css?v=release1" />
     <link rel="stylesheet" href="works-archive.css?v=cutout1" />
     <link rel="stylesheet" href="glyph-field-embed.css?v=2" />
     <link rel="stylesheet" href="xunzi-embed.css?v=1" />
+    <link rel="stylesheet" href="name-v4.css?v=v4" />
     <script type="importmap">
       {"imports":{"three":"./vendor/three/build/three.module.js","three/addons/":"./vendor/three/examples/jsm/"}}
     </script>
@@ -45,7 +46,7 @@
         <button class="about-trigger">关于</button>
       </nav>
       <div class="header-side">
-        <span class="edition">ED. 01</span>
+        <span class="edition">V4</span>
         <button class="sound-toggle" aria-label="切换环境声音" aria-pressed="false">
           <i></i><i></i><i></i>
         </button>
@@ -401,7 +402,7 @@
       </section>
       <section class="page name-page" data-page="name" aria-hidden="true" aria-label="寻字">
         <button class="route-link name-exit" data-route="name-gateway">← 返回展览</button>
-        <iframe class="name-experience-frame" src="xunzi/beijian-name-complete-20260924/index.html?embed=site" title="碑间寻字：择形、制拓与结果" allow="clipboard-write"></iframe>
+        <div id="name-app"><div class="name-loading" role="status"><p class="name-kicker">碑间 / 字形索引</p><h1>寻字</h1><p data-name-load-message>正在打开寻字体验…</p><button type="button" data-name-retry hidden>重新加载</button><noscript>请开启 JavaScript，以体验寻字与成拓。</noscript></div></div>
       </section>
     </main>
 
@@ -436,5 +437,6 @@
     <script src="archive-room.js?v=catalog3"></script>
     <script src="vendor/lucide.min.js"></script>
     <script type="module" src="stele-viewer.js?v=public1"></script>
+    <script src="name-loader.js?v=v4"></script>
   </body>
 </html>

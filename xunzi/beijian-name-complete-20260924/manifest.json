@@ -1,16 +1,46 @@
 {
-  "package": "碑间·寻字完全体",
-  "version": "2026-09-24",
+  "package": "碑间·寻字",
+  "version": "V4",
   "files": [
     {
       "file": "assets/name/coverage.json",
-      "bytes": 83464,
-      "sha256": "5babeded52a0efc43628f9d2ae06548b8187dcdb98e3a8912e68b08e18f60cda"
+      "bytes": 134893,
+      "sha256": "41fd6b650302a02cb9669af87ab33cd0f7122dff657313abc19c4151cfc0c1f7"
     },
     {
       "file": "assets/name/entry-stone.png",
       "bytes": 2734444,
       "sha256": "107fcda32eb318213d6592f639ecc3a7391ecc3bfc31939f958ce57ab27e8337"
+    },
+    {
+      "file": "assets/name/fonts/fandol-LICENSE.txt",
+      "bytes": 35737,
+      "sha256": "853b586f0d520493390e571431afaf36a5fbb27dcfd239338a7ee9b0505cb004"
+    },
+    {
+      "file": "assets/name/fonts/fandol-README.txt",
+      "bytes": 645,
+      "sha256": "32537e063f4c7d4aebf016d5c8279cbce13f34fc8970f24b2578a3c04d0f8ca6"
+    },
+    {
+      "file": "assets/name/fonts/FandolKai-Regular.otf",
+      "bytes": 7790552,
+      "sha256": "ea7e7fb4f9b3ac694a68d43946e04d21deed6e8c29a7c2d3081e1a4138f2f827"
+    },
+    {
+      "file": "assets/name/fonts/FandolKai-Regular.woff2",
+      "bytes": 4442104,
+      "sha256": "6d3f32a782f28dc22dcbd820430e4fc108a78ac5bee05901455da13766681465"
+    },
+    {
+      "file": "assets/name/fonts/liujianmaocao-OFL.txt",
+      "bytes": 4406,
+      "sha256": "ff56684b0212481e7c3886c26d5a655de9b211c8119e5ccc756138a97b066acc"
+    },
+    {
+      "file": "assets/name/fonts/LiuJianMaoCao-Regular.woff2",
+      "bytes": 2339764,
+      "sha256": "47e6da9d03af2aa6288c8524966a16e7345d9044efe78647eb2b841dc3aa9e42"
     },
     {
       "file": "assets/name/fonts/longcang-OFL.txt",
@@ -108,6 +138,86 @@
       "sha256": "78acf866c81e28b1b79eed1eebc93d240c0e19228be29c1a80b01a5e8c74f43f"
     },
     {
+      "file": "assets/name/personas/01.webp",
+      "bytes": 317278,
+      "sha256": "a37912a733c7736fe5941545d3a9ca2341e437a8e4e88ba1f9bf7145b5cd0ce5"
+    },
+    {
+      "file": "assets/name/personas/02.webp",
+      "bytes": 241450,
+      "sha256": "f762a5d62b0146d44ce4c587c15cdd4ea79aabcd369a70833a2b4d74e1a92398"
+    },
+    {
+      "file": "assets/name/personas/03.webp",
+      "bytes": 358618,
+      "sha256": "011f8ff4c2090739a6dd828103c9e4b34077483c917c9329f3ba9622237471b1"
+    },
+    {
+      "file": "assets/name/personas/04.webp",
+      "bytes": 269604,
+      "sha256": "04e3bbfbad1c5573bcd4d40b47957856265d521b359863c206a78ed821b34653"
+    },
+    {
+      "file": "assets/name/personas/05.webp",
+      "bytes": 388866,
+      "sha256": "0c17d0ff9b006f02e0fc5e96470b53b0cfdfafd7ec97c4e2ae73a8a143d4d553"
+    },
+    {
+      "file": "assets/name/personas/06.webp",
+      "bytes": 199394,
+      "sha256": "83cc0bcb3ac4afbb1c03aa01eb574096741e143e44312e8424c995b1fe122e99"
+    },
+    {
+      "file": "assets/name/personas/07.webp",
+      "bytes": 265720,
+      "sha256": "00255302542de15a92284bcff7f304828af54e1c93656b04bc0948699f43bfc6"
+    },
+    {
+      "file": "assets/name/personas/08.webp",
+      "bytes": 295308,
+      "sha256": "4d5469aaf1e90da5c6be57e18cda64dcc0932aee5af8f1b2f11df707f59df180"
+    },
+    {
+      "file": "assets/name/personas/09.webp",
+      "bytes": 359932,
+      "sha256": "64569e783a3c027d49d7cb87282408c8bfbe6eed02fe2cc123736bb1e761a68c"
+    },
+    {
+      "file": "assets/name/personas/10.webp",
+      "bytes": 275018,
+      "sha256": "c85719ad381b4d288bc78c9ca77324956c87d9825e758b0db2fee4f792c24168"
+    },
+    {
+      "file": "assets/name/personas/11.webp",
+      "bytes": 310904,
+      "sha256": "361405f1f57bf784405e224c2f140be6883c87ed4c07e5f80b79c9324881943e"
+    },
+    {
+      "file": "assets/name/personas/12.webp",
+      "bytes": 278376,
+      "sha256": "e3d079977ae34aa5b8d025978b545b2ed7a053c3869c5a0ad8f0b0b5b9a3bf70"
+    },
+    {
+      "file": "assets/name/personas/13.webp",
+      "bytes": 328308,
+      "sha256": "526ce7dff26d09ea70a1becb1ec37682948f90d34d122153e1c83f87e9908fa3"
+    },
+    {
+      "file": "assets/name/personas/14.webp",
+      "bytes": 267502,
+      "sha256": "05b2854917c99ecd2fa8bac816abc12127268e1eaca9e6ed6b6fbf7ccac82b54"
+    },
+    {
+      "file": "assets/name/personas/15.webp",
+      "bytes": 284730,
+      "sha256": "d4394ea53b8885f7ce2020d43067dd9a23b0c10f351675ad8caea836787381ee"
+    },
+    {
+      "file": "assets/name/personas/16.webp",
+      "bytes": 360384,
+      "sha256": "937cd56e0f5ac2afb41e9dbd2d6c178e3ed4c1cc190cd8b92ec07a22477b6132"
+    },
+    {
       "file": "assets/name/profiles.json",
       "bytes": 14329,
       "sha256": "4c7a30dec3f8a35139571188ae987b36154f07d9e1314f34fc2f33cd2a4cadba"
@@ -118,39 +228,74 @@
       "sha256": "e89f5a26775278a16d959482076b2dcc24abc86f4c0869def2f2daabece39eaa"
     },
     {
+      "file": "assets/name/scene/craft-table.png",
+      "bytes": 2685617,
+      "sha256": "0d34a6934ea330e5b0db06c840fdde174ee7615dab3c9d9d2b6ecbf1cebcca98"
+    },
+    {
+      "file": "assets/name/scene/found-hall.png",
+      "bytes": 2053730,
+      "sha256": "985a8c5b9a0a2ee6e9267785c7228c98fc0ccccdc4a810bf95dadc34fc22a0c5"
+    },
+    {
+      "file": "assets/name/scene/pick-table.png",
+      "bytes": 2843659,
+      "sha256": "1424acec7b6d700c0eb3c34d7be02b2e9dc9fb7de953b3f1e98fb4bee199792b"
+    },
+    {
+      "file": "assets/name/scene/stone-a.png",
+      "bytes": 3256390,
+      "sha256": "ccb135393a3a0488f54d16809d14ad3d7004aa29af2802fe3950587d55b6ab4d"
+    },
+    {
+      "file": "assets/name/scene/stone-b.png",
+      "bytes": 3688294,
+      "sha256": "3b0502afee776405d61ee9332d7b6f0c5b12d23c93c10dc124da1f43fc5a9351"
+    },
+    {
+      "file": "assets/name/scene/stone-c.png",
+      "bytes": 3434314,
+      "sha256": "cc14141cfd8e9e82bbe800434e52f5a268b4be8307db225037ed3520e56ddb98"
+    },
+    {
       "file": "assets/surface-02.png",
       "bytes": 3118047,
       "sha256": "16fa6a647c8375585c6847155d81ee1d1013360e27e52ae2c7df629b6615db82"
     },
     {
       "file": "index.html",
-      "bytes": 1454,
-      "sha256": "ae8c57d6ebc24ea42078c4d6598ec77ba640c5d33136b432368cd71baa76516b"
+      "bytes": 1561,
+      "sha256": "338172834cc137493ac190899a7bdf574139413ada5d1904abd9ae9372561d3b"
     },
     {
       "file": "name-core.js",
-      "bytes": 4095,
-      "sha256": "ca466e9f3c3479acd5a7decd2698c832ef7540f871e43dc36c3a6c55852c2c4e"
+      "bytes": 4951,
+      "sha256": "08e3c314ce1f775b46473b1c5497fae1f056b90a60e7f1acd1492b1deb26684a"
     },
     {
       "file": "name-experience.css",
-      "bytes": 26958,
-      "sha256": "3fa93cfb0b996ce91af7192d923b273e7c10caa9e64a8e2fb4fc2141d7d53452"
+      "bytes": 27344,
+      "sha256": "86e946ceef25e85d1a2836d876f4c2c75c6eba8fd500070cc7f2bbd8fe96c75f"
     },
     {
       "file": "name-experience.js",
-      "bytes": 27177,
-      "sha256": "82d02398a57c53cc87b34a79ae5a48604ab448608eb25fc3fa854af933b63d9c"
+      "bytes": 28938,
+      "sha256": "4d7851ffc37cfcaeac5def43dde86dd1b6fdb7c29f9fbcf6937fc635c657fdbd"
     },
     {
       "file": "name-finish.js",
-      "bytes": 11164,
-      "sha256": "028cf32a2d8d9e24771596ccbec458e1e51673daa07857a2e2a2cabf950ef630"
+      "bytes": 15345,
+      "sha256": "ec6bdcf7433f8287bcd3f77a1e0f3911129b6fe56a7e6e71e365433900719220"
     },
     {
       "file": "name-loader.js",
-      "bytes": 816,
-      "sha256": "5e649b8cd55de4248d11848c4d912e335b9ab3a3cf4c29307d7fc05c943eaeac"
+      "bytes": 812,
+      "sha256": "ae74ab8f4f59afe002bd4065a33186ac3f5bb3010e02b549f70421b014d875eb"
+    },
+    {
+      "file": "name-v4.css",
+      "bytes": 24997,
+      "sha256": "9b2eec3aa8e099f18ecaa3346f6b236f030a12171a1369413d4f643357c2beed"
     },
     {
       "file": "preview-server.cjs",
