@@ -128,8 +128,7 @@
     motion.add({desktop:'(min-width:801px)',mobile:'(max-width:800px)',reduce:'(prefers-reduced-motion: reduce)'}, context => {
       const minimal=context.conditions.reduce;
       const moduleHome=page===home && window.pageMotion?.enabled;
-      if (moduleHome) gsap.set(progress,{scaleX:(moduleIndex+1)/(sections.length+1)});
-      else gsap.fromTo(progress,{scaleX:0},{scaleX:1,ease:'none',scrollTrigger:{trigger:page,start:'top top',end:'bottom bottom',scrub:true}});
+      if (!moduleHome) gsap.fromTo(progress,{scaleX:0},{scaleX:1,ease:'none',scrollTrigger:{trigger:page,start:'top top',end:'bottom bottom',scrub:true}});
       const reveal=moduleHome?[]:[...page.querySelectorAll('.reveal')];
       reveal.forEach(el=>el.classList.add('motion-owned','is-visible'));
       if (!minimal) {
@@ -169,44 +168,25 @@
   document.fonts.ready.then(()=>{pendingRefresh=true;refreshWhenIdle();});
   document.querySelectorAll('main img').forEach(img=>img.addEventListener('load',()=>{pendingRefresh=true;refreshWhenIdle();},{once:true}));
 
-  // A module index, not scroll coordinates, owns the desktop exhibition.
+  // The opening uses native scroll; later exhibition routes retain their existing controls.
   const desktop = matchMedia('(min-width:801px) and (pointer:fine)');
   const home = document.querySelector('[data-page="home"]');
-  const sections = [home.querySelector('.hero'),...home.querySelectorAll('.editorial-screen')];
-  const interstitials = [...home.querySelectorAll('.statement,.archive-invite')];
+  const sections = [...home.querySelectorAll('.scene')];
   const worksModules = [...document.querySelectorAll('[data-works-module]')];
-  let routeMotion, moduleMotion, routeCleanup, moduleIndex = 0, worksModuleIndex = 0;
+  let routeMotion, routeCleanup, worksModuleIndex = 0;
   let lastWheel = 0, wheelSum = 0, wheelUsed = false, wheelDirection = 0;
   const activeRoute = () => document.querySelector('.page--active')?.dataset.page;
   const overlayOpen = () => document.body.classList.contains('is-locked') || document.querySelector('dialog[open]') || document.fullscreenElement;
   const mainRoute = () => desktop.matches && ['home','works','name-gateway'].includes(activeRoute()) && !overlayOpen();
   function syncRoute() {
-    document.body.classList.toggle('is-module-route',desktop.matches && ['home','works','name-gateway'].includes(activeRoute()));
+    document.body.classList.toggle('is-module-route',desktop.matches && ['works','name-gateway'].includes(activeRoute()));
+    document.body.classList.toggle('home-film-active',activeRoute()==='home');
     const page = document.querySelector('.works-page');
     if (activeRoute() !== 'works') document.body.classList.remove('is-glyph-field');
     else document.body.classList.toggle('is-glyph-field', page.scrollTop >= page.clientHeight * .5);
   }
   function restore(index = null) {
-    moduleMotion?.kill(); moduleMotion=null;
-    if(index!==null)moduleIndex=gsap.utils.clamp(0,sections.length-1,index);
-    sections.forEach((el,i)=>{
-      el.classList.toggle('is-current-module',i===moduleIndex);
-      el.inert=desktop.matches && i!==moduleIndex;
-      if(desktop.matches)el.setAttribute('aria-hidden',String(i!==moduleIndex));
-      else el.removeAttribute('aria-hidden');
-      gsap.set(el,{clearProps:'opacity,visibility,transform,willChange'});
-    });
-    interstitials.forEach(el=>{
-      el.inert=desktop.matches;
-      if(desktop.matches)el.setAttribute('aria-hidden','true');
-      else el.removeAttribute('aria-hidden');
-    });
-    home.dataset.module=String(moduleIndex);
-    document.body.classList.remove('is-section-moving');
-    if(desktop.matches && activeRoute()==='home') {
-      window.scrollTo({top:0,behavior:'instant'});
-      gsap.set(progress,{scaleX:(moduleIndex+1)/(sections.length+1)});
-    }
+    if (index !== null && activeRoute()==='home') window.homeFilm?.goTo(index, 'instant');
   }
   function restoreWorks(index = worksModuleIndex) {
     worksModuleIndex = gsap.utils.clamp(0, worksModules.length - 1, index);
@@ -253,19 +233,8 @@
   }
   function section(index) {
     if (!mainRoute() || window.pageMotion.busy || activeRoute()!=='home') return;
-    if (index>=sections.length) { showPage('works'); return; }
-    if (index<0 || index===moduleIndex) return;
-    const outgoing=sections[moduleIndex],incoming=sections[index],direction=Math.sign(index-moduleIndex);
-    moduleIndex=index;
-    if (reduce()) { restore();return; }
-    if(outgoing.contains(document.activeElement))document.activeElement.blur();
-    outgoing.inert=true; document.body.classList.add('is-section-moving');
-    gsap.set([outgoing,incoming],{willChange:'transform,opacity'});
-    gsap.set(incoming,{autoAlpha:1,yPercent:direction*100});
-    // Both panels travel a full viewport: no partial overlay or interstitial resting state.
-    moduleMotion=gsap.timeline({defaults:{ease:'power3.inOut'},onComplete:()=>restore()})
-      .to(outgoing,{yPercent:-direction*100,autoAlpha:0,duration:.78},0)
-      .to(incoming,{yPercent:0,duration:.78},0);
+    if (index >= sections.length) { showPage('works'); return; }
+    if (index >= 0) window.homeFilm?.goTo(index, reduce() ? 'instant' : 'smooth');
   }
   function step(direction) {
     if (!mainRoute()) return;
@@ -273,10 +242,10 @@
     if(window.pageMotion.busy)return;
     if (activeRoute()==='works') { showPage(direction > 0 ? 'name-gateway' : 'home', false, direction < 0 ? sections.length - 1 : null); return; }
     if (activeRoute()==='name-gateway') { if(direction<0)showPage('works'); return; }
-    section(moduleIndex+direction);
+    section((window.homeFilm?.index || 0)+direction);
   }
-  window.pageMotion={change,section,restore,restoreWorks,syncRoute,enterWorks:previousRoute=>restoreWorks(previousRoute==='name-gateway'?worksModules.length-1:previousRoute==='works'?worksModuleIndex:0),get index(){return moduleIndex;},get enabled(){return desktop.matches;},
-    get busy(){return Boolean(routeMotion || moduleMotion);},get returnRoute(){return detailOrigin?.route || 'works';}};
+  window.pageMotion={change,section,restore,restoreWorks,syncRoute,enterWorks:previousRoute=>restoreWorks(previousRoute==='name-gateway'?worksModules.length-1:previousRoute==='works'?worksModuleIndex:0),get index(){return window.homeFilm?.index || 0;},get enabled(){return desktop.matches;},
+    get busy(){return Boolean(routeMotion);},get returnRoute(){return detailOrigin?.route || 'works';}};
   const syncDesktop = () => {
     if(routeMotion) routeMotion.progress(1);
     document.body.classList.toggle('has-page-motion',desktop.matches);restore();syncRoute();
@@ -288,6 +257,12 @@
   const handleWheel = (event, forwarded = false) => {
     if (!desktop.matches || overlayOpen() || event.ctrlKey || event.metaKey) return;
     if (!mainRoute() && !window.pageMotion.busy) return;
+    if (activeRoute()==='home' && !window.pageMotion.busy) {
+      const now=performance.now(), delta=event.deltaY;
+      const notch=event.deltaMode!==0 || (event.deltaX===0 && Number.isInteger(delta) && Math.abs(delta)>=80 && Math.abs(delta)%10===0);
+      const fresh=now-lastWheel>180 || notch;
+      if (!(delta>0 && window.homeFilm?.atEnd && fresh)) { lastWheel=now; return; }
+    }
     if (Math.abs(event.deltaX)>Math.abs(event.deltaY)) return;
     // Keep extending the consumed gesture while a page is moving, but never queue another step.
     // The next trackpad gesture must first go quiet; a fresh mouse-wheel notch still works at once.
@@ -321,10 +296,13 @@
   });
   window.addEventListener('keydown',event=>{
     if (!mainRoute() || event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey || event.target.closest('input,textarea,select,[contenteditable=true],[data-light-surface]')) return;
+    if (activeRoute()==='home') {
+      if (window.homeFilm?.atEnd && ['ArrowDown','PageDown',' '].includes(event.key) && !event.shiftKey && !event.target.closest('button,a')) { event.preventDefault(); if(!event.repeat)step(1); }
+      return;
+    }
     const direction={ArrowDown:1,PageDown:1,ArrowUp:-1,PageUp:-1}[event.key]
       || (event.key===' ' && !event.target.closest('button,a') ? (event.shiftKey?-1:1) : 0);
     if(direction){event.preventDefault();if(!event.repeat)step(direction);}
-    if(activeRoute()==='home' && ['Home','End'].includes(event.key)){event.preventDefault();section(event.key==='Home'?0:sections.length-1);}
   });
   window.addEventListener('resize',()=>{if(routeMotion)routeMotion.progress(1);restore();});
   matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',()=>{

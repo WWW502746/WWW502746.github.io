@@ -9,7 +9,7 @@
       name="description"
       content="碑间，一座由痕迹、时间与光构成的线上作品现场。"
     />
-    <title>碑间 BEIJIAN · V4</title>
+    <title>碑间 BEIJIAN · V5</title>
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="stele-viewer.css?v=editorial1" />
     <link rel="stylesheet" href="stele-editorial.css?v=editorial1" />
@@ -20,6 +20,10 @@
     <link rel="stylesheet" href="glyph-field-embed.css?v=2" />
     <link rel="stylesheet" href="xunzi-embed.css?v=1" />
     <link rel="stylesheet" href="name-v4.css?v=v4" />
+    <link rel="preload" as="image" href="assets/landing-v5/stone.jpg" fetchpriority="high" />
+    <link rel="preload" as="font" href="assets/landing-v5/fandol-kai.woff2" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="home-film.css?v=v5.3" />
+    <noscript><style>.boot{display:none}</style></noscript>
     <script type="importmap">
       {"imports":{"three":"./vendor/three/build/three.module.js","three/addons/":"./vendor/three/examples/jsm/"}}
     </script>
@@ -46,7 +50,8 @@
         <button class="about-trigger">关于</button>
       </nav>
       <div class="header-side">
-        <span class="edition">V4</span>
+        <span class="edition">V5</span>
+        <button class="clean-toggle" type="button" aria-pressed="false" title="隐藏文字，只看画面"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M2.5 7V2.5H7M13 2.5h4.5V7M17.5 13v4.5H13M7 17.5H2.5V13" stroke="currentColor"/></svg><span class="visually-hidden">纯画面</span></button>
         <button class="sound-toggle" aria-label="切换环境声音" aria-pressed="false">
           <i></i><i></i><i></i>
         </button>
@@ -68,89 +73,63 @@
 
     <main>
       <section class="page page--active" data-page="home">
-        <div class="hero">
-          <div class="hero__copy">
-            <p class="eyebrow">数字艺术项目</p>
-            <h1 data-lettering="碑间">碑间</h1>
-            <p class="hero__note">石不言<br />光替它显现</p>
-            <button class="hero__enter route-link" data-route="works">进入作品 <i data-lucide="arrow-right"></i></button>
+        <div class="home-film">
+    <div class="stage">
+      <video class="transition-film" id="home-transition" data-src="assets/landing-v5/transition-source-4k60.mp4" data-hosted-src="https://github.com/WWW502746/WWW502746.github.io/releases/download/v5-media-20261012/transition-source-4k60.mp4" data-fps="60" data-frames="716" data-last-frame="11.925" preload="none" muted playsinline aria-hidden="true"></video>
+      <video class="transition-film" id="home-transition-23" data-src="assets/landing-v5/transition-rubbing-hall.mp4" data-hosted-src="https://github.com/WWW502746/WWW502746.github.io/releases/download/v5-media-20261012/transition-rubbing-hall.mp4" data-fps="24" data-frames="169" data-last-frame="7.0003255208" preload="none" muted playsinline aria-hidden="true"></video>
+      <section class="scene screen scene--stone" id="stone" aria-labelledby="stone-title">
+        <img class="still backdrop still--stone" src="assets/landing-v5/stone.jpg" width="1678" height="937" alt="黑色石碑在侧光中显露刻字与斑驳的石面" fetchpriority="high">
+        <div class="copy copy--stone home-copy">
+          <h1 id="stone-title" class="original-title"><span class="visually-hidden">碑间</span><img src="assets/landing-v5/beijian-original.svg" width="197" height="110" alt="碑间" aria-hidden="true"></h1>
+          <p class="invitation" lang="en">STONE / PAPER / SPACE</p>
+          <p class="home-lead">在石与纸之间，看见文字的另一种形态。</p>
+          <div class="home-note">
+            <p>碑间以石刻与书写为线索，将虚构的碑石、拓印图像与光影空间，连接为一处可以靠近、阅读与游历的数字现场。</p>
+            <p>从石的局部出发，经过纸上墨迹的铺展，再进入雕刻与倒影交错的石厅。观看由近及远，连接字形、材料与空间。</p>
           </div>
-
-          <div class="light-surface hero__stone" data-light-surface>
-            <img class="surface-base" src="assets/hero-stone.png" alt="刻痕密布的黑色石碑局部" />
-            <img class="surface-light" src="assets/hero-stone.png" alt="" aria-hidden="true" />
-            <div class="surface-glow" aria-hidden="true"></div>
-          </div>
-
-          <button class="scroll-cue" aria-label="向下浏览">
-            <span>向下</span><i data-lucide="arrow-down"></i>
-          </button>
+          <a class="text-link scroll-cue" href="#rubbing" data-stop="1"><span id="scroll-instruction">向下进入</span><span class="cue-english" lang="en">Scroll to explore</span><span class="cue-arrow" aria-hidden="true">↓</span></a>
         </div>
-
-        <section class="statement reveal">
-          <p class="section-index">01 / 痕迹</p>
-          <blockquote>
-            被刻下的并不是一句话<br />而是时间穿过物质的方式
-          </blockquote>
-          <div class="statement__aside">
-            <p>碑间不是历史的复制。</p>
-            <p>它让虚构的石、无法辨认的文字与移动的光，在屏幕上形成另一种遗址。</p>
+      </section>
+      <section class="scene screen scene--rubbing" id="rubbing" aria-labelledby="rubbing-title">
+        <img class="still backdrop still--rubbing" src="assets/landing-v5/rubbing-v3.png" width="1672" height="941" alt="一纸拓片沿黑石台阶展开，石上的刻痕留在纸上" decoding="async">
+        <div class="reading-shade" aria-hidden="true"></div>
+        <div class="copy copy--rubbing rubbing-copy">
+          <div class="chapter-heading">
+            <h2 id="rubbing-title">墨拓</h2>
+            <p class="rubbing-english" lang="en"><span>INK</span><span>RUBBING</span></p>
           </div>
-        </section>
-
-        <section class="editorial-screen editorial-screen--rubbing" aria-label="墨拓回声">
-          <div class="editorial-copy">
-            <p class="editorial-index">02 / 墨拓</p>
-            <h2><span>RUBBING /</span><br />ECHO</h2>
-            <i class="editorial-rule" aria-hidden="true"></i>
-            <p class="editorial-lead">墨拓所存，是碑之回声。</p>
-            <p class="editorial-body">碑拓不止于复制，而是以纸为舟，承接石上之墨，让历经岁月的文字与记忆，在另一种材质中继续传递。</p>
-            <p class="editorial-translation">Ink holds<br />what stone still says.</p>
+          <p class="chapter-lead">把石上的文字，留在纸上。</p>
+          <div class="rubbing-body">
+            <p>一张纸，将石面上的字迹、裂隙与纹理转为黑白。拓片留下的，不只有文字，也有石的形貌。</p>
+            <p>在碑间，拓印被转译为数字图像。纸张沿台阶展开，视线顺着墨迹移动，进入下一重空间。</p>
           </div>
-          <figure class="editorial-monument editorial-monument--rubbing">
-            <img src="assets/home/rubbing-stele.png" alt="刻有铭文、边缘残损的灰石碑" />
-          </figure>
-          <aside class="editorial-aside">
-            <div class="editorial-mark"><span>碑<br />拓</span><i aria-hidden="true"></i></div>
-            <figure class="editorial-detail">
-              <img src="assets/works/stele/fracture-v1.webp" alt="石碑表面拓印与断痕的细节" loading="lazy" />
-              <figcaption>拓片细节</figcaption>
-            </figure>
-            <p class="editorial-aside-note">纸承其墨，<br />墨续其声。</p>
-          </aside>
-          <footer class="editorial-footer"><span>BEIJIAN　/　XI’AN　/　CHINA</span><span>STONE　/　MEMORY　/　HUMANITY</span></footer>
-        </section>
-
-        <section class="editorial-screen editorial-screen--silence" aria-label="碑林静默">
-          <div class="editorial-copy">
-            <p class="editorial-index">03 / 碑林</p>
-            <h2><span>STELE /</span><br />SILENCE</h2>
-            <i class="editorial-rule" aria-hidden="true"></i>
-            <p class="editorial-lead">碑之静，亦是时间之声。</p>
-            <p class="editorial-body">石头保存了时间的痕迹，文字承载人类的记忆。碑不只是一件石物，更是穿越时光的见证。</p>
-            <p class="editorial-translation">Stone remembers<br />what time lets go.</p>
+          <p class="chapter-note" lang="en">An impression of stone, carried on paper.</p>
+        </div>
+      </section>
+      <section class="scene screen scene--hall" id="hall" aria-labelledby="hall-title">
+        <img class="still backdrop still--hall" src="assets/landing-v5/hall.png" width="1672" height="941" alt="卷起的拓片停在石厅地面，雕刻石柱与光映在深色倒影中" decoding="async">
+        <div class="reading-shade" aria-hidden="true"></div>
+        <div class="copy copy--hall hall-copy">
+          <div class="chapter-heading">
+            <h2 id="hall-title">石境</h2>
+            <p class="rubbing-english" lang="en"><span>THE STONE</span><span>HALL</span></p>
           </div>
-          <figure class="editorial-monument editorial-monument--silence">
-            <img src="assets/archive-room/fragment-cutout-v2.png" alt="边缘破损、刻有纹饰的残碑" />
-          </figure>
-          <aside class="editorial-aside">
-            <div class="editorial-mark"><span>碑<br />林</span><i aria-hidden="true"></i></div>
-            <figure class="editorial-detail">
-              <img src="assets/works/fragment/inscription-v2.webp" alt="残碑表面的石刻细节" loading="lazy" />
-              <figcaption>碑面细节</figcaption>
-              <small>DETAIL</small>
-            </figure>
-            <p class="editorial-aside-note">石存其形，<br />字留其意。</p>
-          </aside>
-          <footer class="editorial-footer"><span>BEIJIAN　/　XI’AN　/　CHINA</span><span>STONE　/　MEMORY　/　HUMANITY</span></footer>
-        </section>
-
-        <section class="archive-invite reveal">
-          <p>石上留下的痕迹<br />构成一个正在生成的档案</p>
-          <button class="route-link arrow-link" data-route="works">进入碑间 <i>↗</i></button>
-          <button class="route-link name-home-link" data-route="name">寻字成拓 <i data-lucide="arrow-up-right"></i></button>
-        </section>
-
+          <p class="chapter-lead">从一纸墨迹，走入石的空间。</p>
+          <div class="rubbing-body">
+            <p>卷纸停在石厅深处。柱身的纹饰、脚下的倒影与远处的光，构成新的观看路径；纸上的墨迹与立体的石刻，在此相遇。</p>
+            <p>这是一处为作品生成的虚构现场。沿着石与光的层次向内，看刻字、断痕和浮雕如何改变一块石的面貌。</p>
+          </div>
+          <p class="chapter-note" lang="en">Stone, inscription and light.</p>
+          <button class="text-link gallery-enter route-link" data-route="works" type="button"><span>查看作品</span><span aria-hidden="true">↗</span></button>
+        </div>
+      </section>
+    </div>
+  <footer class="film-footer page-footer">
+    <div class="chapter-progress chapters" aria-label="章节与转场进度"><a href="#stone" data-stop="0" aria-current="location">01</a><span class="progress-track"><i></i></span><a href="#rubbing" data-stop="1">02</a><span class="progress-track"><i></i></span><a href="#hall" data-stop="2">03</a></div>
+  </footer>
+  <span id="media-status" class="media-status" role="status"></span>
+  <span id="progress-number" class="visually-hidden" aria-hidden="true">000</span>
+        </div>
       </section>
 
       <section class="page works-page archive-catalog" data-page="works" data-archive-room aria-hidden="true">
@@ -430,10 +409,11 @@
     </section>
 
     <script src="lettering.js?v=beijian1"></script>
-    <script src="app.js?v=release1"></script>
+    <script src="app.js?v=v5"></script>
     <script src="vendor/gsap/gsap.min.js"></script>
     <script src="vendor/gsap/ScrollTrigger.min.js"></script>
-    <script src="experience.js?v=release1"></script>
+    <script src="experience.js?v=v5"></script>
+    <script src="home-film.js?v=v5.3"></script>
     <script src="archive-room.js?v=catalog3"></script>
     <script src="vendor/lucide.min.js"></script>
     <script type="module" src="stele-viewer.js?v=public1"></script>

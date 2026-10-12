@@ -70,7 +70,7 @@ function showPage(route, immediate = false, homeSection = null) {
     currentPage = target.dataset.page;
     if (currentPage === 'works') window.pageMotion?.enterWorks(previousPage);
     window.pageMotion?.syncRoute();
-    if (currentPage === 'home' && enhanced) window.pageMotion.restore(homeSection);
+
     document.body.classList.toggle("is-name", currentPage === "name");
     if (currentPage !== "detail") artifactViewers.forEach(viewer => viewer.dispatchEvent(new Event("artifact:deactivate")));
     navButtons.forEach((button) => button.classList.toggle("is-current", button.dataset.route === (currentPage === "name-gateway" ? "name" : currentPage)));
@@ -78,12 +78,12 @@ function showPage(route, immediate = false, homeSection = null) {
     observeReveals();
     const address = currentPage === "detail"
       ? workRoutes[detailPage.dataset.work]
-      : currentPage;
+      : currentPage === 'home' && homeSection > 0 ? ['home','rubbing','hall'][homeSection] : currentPage;
     if (location.hash !== `#${address}`) history.pushState(null, "", `#${address}`);
     activeAddress = address;
-    const top = currentPage === 'home' && enhanced ? 0 : routePositions.get(address) || 0;
+    const top = currentPage === 'home' && homeSection !== null ? 0 : routePositions.get(address) || 0;
     window.scrollTo({ top, behavior: "instant" });
-    window.dispatchEvent(new CustomEvent("site:page", { detail: { route: currentPage } }));
+    window.dispatchEvent(new CustomEvent("site:page", { detail: { route: currentPage, homeSection } }));
   };
   // Defer until selectWork's existing click handler has selected the work.
   routeTimer = setTimeout(() => enhanced ? window.pageMotion.change(target, activate, immediate) : activate(), immediate || enhanced ? 0 : 430);
@@ -285,11 +285,6 @@ document.querySelector(".about-close").addEventListener("click", () => {
   document.body.classList.remove("is-locked");
 });
 
-document.querySelector(".scroll-cue").addEventListener("click", () => {
-  if (window.pageMotion?.enabled) { window.pageMotion.section(1); return; }
-  document.querySelector(".statement").scrollIntoView({ behavior: "smooth" });
-});
-
 const soundToggle = document.querySelector(".sound-toggle");
 let audioContext;
 let ambienceGain;
@@ -363,6 +358,8 @@ window.addEventListener("keydown", (event) => {
 
 function openAddress() {
   const route = location.hash.slice(1);
+  const sceneIndex = ['stone','rubbing','hall'].indexOf(route);
+  if (sceneIndex >= 0) { showPage('home', true, sceneIndex); return; }
   const model = route === 'floral' ? 'floral360' : route === 'dragon' ? 'dragon360' : route === 'head' ? 'head360' : ['fragment', 'work-04'].includes(route) ? 'fragment360'
     : ['stele', 'stele360', 'detail', 'work-03'].includes(route) ? 'stele360' : null;
   if (model) {
