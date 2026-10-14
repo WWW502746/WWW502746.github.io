@@ -107,8 +107,11 @@
     }).scrollTrigger;
     trigger.disable(false);
     clips.forEach(clip => {
-      clip.video.addEventListener('loadeddata', () => { clip.ready = true; render(); });
-      clip.video.addEventListener('seeked', () => seekLatest(clip));
+      ['loadeddata', 'canplay'].forEach(event => clip.video.addEventListener(event, () => { clip.ready = true; render(); }));
+      clip.video.addEventListener('seeked', () => {
+        if (clip.video.readyState >= 2) clip.ready = true;
+        render();
+      });
       clip.video.addEventListener('error', () => { clip.failed = true; render(); });
     });
     window.addEventListener('resize', () => {
