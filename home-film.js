@@ -22,9 +22,10 @@
   function seekLatest(clip) {
     clip.stream?.ensure(clip.desiredTime);
     if (clip.framePlayer && !clip.framePlayer.failed) {
-      if (active && playhead.progress < .5 && !document.hidden) clip.framePlayer.resume();
-      else clip.framePlayer.suspend();
-      return;
+      if (!active || playhead.progress >= .5 || document.hidden) { clip.framePlayer.suspend(); return; }
+      clip.framePlayer.resume();
+      if (clip.framePlayer.ready) { clip.stream.useFrames?.(true); return; }
+      clip.stream.useFrames?.(false);
     }
     if (!clip.ready || clip.failed || clip.video.seeking || Math.abs(clip.video.currentTime - clip.desiredTime) < .001) return;
     clip.video.currentTime = clip.desiredTime;
@@ -143,7 +144,7 @@
               }
             }).then(player => {
               if (!player || player.failed) return;
-              clip.framePlayer = player; clip.stream.useFrames?.(true);
+              clip.framePlayer = player;
               if (!active || playhead.progress >= .5 || document.hidden) player.suspend();
               render();
             });
