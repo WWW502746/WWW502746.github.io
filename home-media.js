@@ -4,7 +4,9 @@
     const media = new MediaSource();
     const objectUrl = URL.createObjectURL(media);
     const base = new URL(manifestUrl, location.href);
+    // Retain the original compressed GOPs for reverse seeks; HTTP caches can evict this 225MB film.
     const cache = new Map();
+    let fetching = 0;
     let manifest, buffer, desired = 0, running = false, initialized = false, failed = false, radius = .6;
 
     function fallback(event) {
@@ -17,17 +19,27 @@
       URL.revokeObjectURL(objectUrl);
       cache.clear();
     }
-    function fetchBytes(src) {
-      if (!cache.has(src)) {
-        const url = new URL(src, base);
-        cache.set(src, fetch(url, { cache: 'force-cache', mode: 'same-origin' }).then(response => {
-          if (!response.ok) throw new Error(`Video fragment: ${response.status}`);
-          return response.arrayBuffer();
-        }));
-        // The HTTP cache retains older fragments without retaining the entire film in JS memory.
-        if (cache.size > 12) cache.delete(cache.keys().next().value);
+    function fetchBytes(src, background = false) {
+      if (cache.has(src)) return cache.get(src);
+      fetching++;
+      const promise = fetch(new URL(src, base), { cache: 'force-cache', mode: 'same-origin', priority: background ? 'low' : 'high' }).then(response => {
+        if (!response.ok) throw new Error(`Video fragment: ${response.status}`);
+        return response.arrayBuffer();
+      }).finally(() => { fetching--; prefetch(); });
+      cache.set(src, promise);
+      return promise;
+    }
+    function prefetch() {
+      if (failed || !initialized || document.hidden || video.style.opacity === '0' || desired >= manifest.fragments.at(-1).start) return;
+      const page = video.closest('[data-page]');
+      if (page && !page.classList.contains('page--active')) return;
+      // One low-priority request prepares future frames without crowding out the next transition.
+      while (fetching < 1) {
+        const fragment = needed().find(fragment => !cache.has(fragment.src) && !contains(fragment))
+          || manifest.fragments.find(fragment => !cache.has(fragment.src));
+        if (!fragment) break;
+        fetchBytes(fragment.src, true).catch(() => fallback());
       }
-      return cache.get(src);
     }
     function update(method, ...args) {
       return new Promise((resolve, reject) => {
@@ -53,7 +65,9 @@
       const native = Math.min(manifest.duration - .000001, Math.max(0, video.currentTime));
       const target = Math.min(manifest.duration - .000001, Math.max(0, desired));
       const at = time => fragments.find(fragment => fragment.start <= time && fragment.end > time) || fragments.at(-1);
-      const priority = [at(native), at(target)];
+      const ahead = time => fragments.slice(fragments.indexOf(at(time)), fragments.indexOf(at(time)) + 3);
+      // A pending native seek needs its following GOPs before chasing a newer scroll target.
+      const priority = [...ahead(native), ...ahead(target)];
       return [...new Set([...priority, ...fragments
         .filter(fragment => [native, target].some(time => fragment.end > time - radius && fragment.start < time + radius))
         .sort((a, b) => Math.abs(a.start - target) - Math.abs(b.start - target))])];
@@ -116,10 +130,11 @@
         await update('appendBuffer', await fetchBytes(manifest.init.src));
         initialized = true;
         pump();
+        prefetch();
       } catch { fallback(); }
     }, { once: true });
     video.src = objectUrl;
     video.load();
-    return { ensure(time) { if (!failed && Number.isFinite(time)) { desired = time; pump(); } } };
+    return { ensure(time) { if (!failed && Number.isFinite(time)) { desired = time; pump(); prefetch(); } } };
   };
 })();
