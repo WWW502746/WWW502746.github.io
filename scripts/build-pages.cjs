@@ -7,7 +7,8 @@ const source = path.resolve(__dirname, '..');
 const output = process.argv[2] ? path.resolve(process.argv[2]) : path.join(source, '_stage_pages');
 assert(!fs.existsSync(output), 'Choose a new output directory; build-pages does not delete existing files.');
 const manifest = JSON.parse(fs.readFileSync(path.join(source, 'assets/landing-v5/stream/stream-manifest.json'), 'utf8'));
-const streamedStone = fs.readFileSync(path.join(source, 'index.html'), 'utf8').includes('data-stream-manifest="assets/landing-v5/mse/stone/manifest.json"');
+const streamedStone = /data-stream-manifest="assets\/landing-v5\/mse\/stone\/manifest\.json(?:\?[^\"]*)?"/.test(fs.readFileSync(path.join(source, 'index.html'), 'utf8'));
+const originalStream = streamedStone ? JSON.parse(fs.readFileSync(path.join(source, 'assets/landing-v5/mse/stone/manifest.json'), 'utf8')) : null;
 assert.equal(manifest.version, 1);
 assert(Array.isArray(manifest.videos) && manifest.videos.length > 0);
 for (const video of manifest.videos) {
@@ -17,6 +18,7 @@ for (const video of manifest.videos) {
 }
 const excluded = new Set([
   '.git', '.github', 'scripts', '_stage_pages', 'assets/landing-v5/stream',
+  ...(streamedStone ? ['assets/landing-v5/mse/stone'] : []),
   path.relative(source, output).split(path.sep).join('/'),
   ...manifest.videos.map(video => video.original),
 ]);
@@ -36,13 +38,33 @@ function copySite(relative = '') {
 }
 copySite();
 if (streamedStone) {
-  const stream = JSON.parse(fs.readFileSync(path.join(output, 'assets/landing-v5/mse/stone/manifest.json'), 'utf8'));
-  for (const part of [stream.init, ...stream.fragments]) {
+  const folder = 'assets/landing-v5/mse/stone';
+  fs.mkdirSync(path.join(output, folder), { recursive: true });
+  const stream = { ...originalStream, version: 2, packs: [] };
+  const readPart = part => {
     assert(/^(?:init\.mp4|\d{3}\.m4s)$/.test(part.src), 'Invalid streamed video part path.');
-    const data = fs.readFileSync(path.join(output, 'assets/landing-v5/mse/stone', part.src));
+    const data = fs.readFileSync(path.join(source, folder, part.src));
     assert.equal(data.length, part.bytes);
     assert.equal(crypto.createHash('sha256').update(data).digest('hex'), part.sha256, 'Streamed video part changed.');
+    return data;
+  };
+  for (let start = 0; start < stream.fragments.length; start += 15) {
+    const pack = { src: 'pack-' + (stream.packs.length + 1) + '.bin', bytes: 0, parts: [] };
+    const hash = crypto.createHash('sha256');
+    const target = fs.openSync(path.join(output, folder, pack.src), 'w');
+    try {
+      for (const part of [...(start === 0 ? [stream.init] : []), ...stream.fragments.slice(start, start + 15)]) {
+        const data = readPart(part);
+        pack.parts.push({ ...part, offset: pack.bytes });
+        fs.writeFileSync(target, data); hash.update(data); pack.bytes += data.length;
+      }
+    } finally { fs.closeSync(target); }
+    pack.sha256 = hash.digest('hex');
+    stream.packs.push(pack); files++; bytes += pack.bytes;
   }
+  const data = JSON.stringify(stream, null, 2) + '\n';
+  fs.writeFileSync(path.join(output, folder, 'manifest.json'), data);
+  files++; bytes += Buffer.byteLength(data);
 }
 
 const buffer = Buffer.alloc(4 * 1024 * 1024);

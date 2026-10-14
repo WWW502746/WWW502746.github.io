@@ -7,40 +7,159 @@
     // Retain the original compressed GOPs for reverse seeks; HTTP caches can evict this 225MB film.
     const cache = new Map();
     let fetching = 0;
-    let manifest, buffer, desired = 0, running = false, initialized = false, failed = false, radius = .6;
+    let manifest, buffer, desired = 0, running = false, initialized = false, failed = false, radius = .6, framesActive = false;
+    let resolveSource, rejectSource;
+    const sourceReady = new Promise((resolve, reject) => { resolveSource = resolve; rejectSource = reject; });
+    sourceReady.catch(() => {});
 
     function fallback(event) {
       if (failed) return;
-      failed = true;
+      failed = true;rejectSource(new Error("Packet source unavailable"));
       event?.stopImmediatePropagation();
       video.removeEventListener('error', fallback, true);
       video.src = fallbackUrl;
       video.load();
       URL.revokeObjectURL(objectUrl);
-      cache.clear();
+      for (const item of records.values()) item.reject(new DOMException("Stopped packet source", "AbortError"));
+      cache.clear();records.clear();for (const packet of packets.values()) packet.controller?.abort();packets.clear();
+      for (const controller of rangeRequests) controller.abort();rangeRequests.clear();
+    }
+    const records = new Map(), packets = new Map(), rangeRequests = new Set();
+    const stats = { completed: 0, bytes: 0, packetRequests: 0, urgentRequests: 0, cancels: 0, resumes: 0, readBytes: 0, skippedBytes: 0, maxBackground: 0, cache };
+    window.packetMediaStats = stats;
+    let hadFrame = false, lastScroll = performance.now(), idleTimer;
+    const secondVideo = document.querySelector?.('#home-transition-23');
+    function record(src) {
+      if (!records.has(src)) {
+        const item = { done: false, direct: false };
+        item.promise = new Promise((resolve, reject) => { item.resolve = resolve; item.reject = reject; });
+        item.promise.catch(() => {});
+        records.set(src, item);cache.set(src, item.promise);
+      }
+      return records.get(src);
+    }
+    function complete(src, bytes) {
+      const item = record(src);
+      if (failed || item.done) return;
+      item.done = true;item.resolve(bytes);stats.bytes += bytes.byteLength;
+      if (src !== manifest.init.src) stats.completed++;
+    }
+    async function readRange(response, from, length, total, consume) {
+      if (!response.ok || !response.body) throw new Error('Packet unavailable');
+      let position = 0, consumed = 0;
+      if (response.status === 206) {
+        const range = /^bytes (\d+)-(\d+)\/(\d+)$/.exec(response.headers.get('content-range') || '');
+        if (!range || Number(range[1]) > from || Number(range[2]) < from + length - 1 || Number(range[3]) !== total) throw new Error('Incorrect packet range');
+        position = Number(range[1]);
+      } else if (response.status !== 200) throw new Error('Packet range unavailable');
+      const reader = response.body.getReader(), end = from + length;
+      try {
+        while (position < end && !failed) {
+          const chunk = await reader.read();
+          if (chunk.done) break;
+          stats.readBytes += chunk.value.length;
+          const start = Math.max(0, from - position), stop = Math.min(chunk.value.length, end - position);
+          stats.skippedBytes += Math.min(chunk.value.length, start);
+          if (stop > start) { consume(chunk.value.subarray(start, stop));consumed += stop - start; }
+          position += chunk.value.length;
+        }
+        if (!failed && consumed !== length) throw new Error('Truncated packet');
+      } finally { await reader.cancel().catch(() => {});reader.releaseLock(); }
+    }
+    function locate(src) {
+      const pack = manifest.packs.find(pack => pack.parts.some(part => part.src === src));
+      return { pack, part: pack.parts.find(part => part.src === src) };
+    }
+    function urgent(src) {
+      const item = record(src);
+      if (item.done || item.direct) return;
+      item.direct = true;fetching++;stats.urgentRequests++;
+      const { pack, part } = locate(src), controller = new AbortController();
+      rangeRequests.add(controller);
+      fetch(new URL(pack.src, base), { cache: 'force-cache', mode: 'same-origin', priority: 'high', signal: controller.signal,
+        headers: { Range: `bytes=${part.offset}-${part.offset + part.bytes - 1}` } })
+        .then(async response => {
+          const bytes = new Uint8Array(part.bytes);let filled = 0;
+          await readRange(response, part.offset, part.bytes, pack.bytes, piece => { bytes.set(piece, filled);filled += piece.length; });
+          complete(src, bytes.buffer);
+        }).catch(() => { if (!failed) fallback(); })
+        .finally(() => { fetching--;rangeRequests.delete(controller);prefetch(); });
+    }
+    function startPacket(pack) {
+      let state = packets.get(pack.src);
+      if (state?.running) return state;
+      const first = pack.parts.findIndex(part => !records.get(part.src)?.done);
+      if (first < 0) return state;
+      const cached = pack.parts.findIndex((part, index) => index > first && records.get(part.src)?.done);
+      const members = pack.parts.slice(first, cached < 0 ? pack.parts.length : cached);
+      const from = members[0].offset, last = members.at(-1), end = last.offset + last.bytes;
+      if (state) stats.resumes++;
+      state = { running: true, received: from, controller: new AbortController() };packets.set(pack.src, state);
+      stats.maxBackground = Math.max(stats.maxBackground, [...packets.values()].filter(state => state.running).length);
+      fetching++;stats.packetRequests++;
+      (async () => {
+        const response = await fetch(new URL(pack.src, base), { cache: 'force-cache', mode: 'same-origin', priority: 'low', signal: state.controller.signal,
+          headers: { Range: `bytes=${from}-${end - 1}` } });
+        let index = 0, filled = 0, bytes = new Uint8Array(members[0].bytes);
+        await readRange(response, from, end - from, pack.bytes, chunk => {
+          let offset = 0;
+          while (offset < chunk.length) {
+            const part = members[index], count = Math.min(chunk.length - offset, part.bytes - filled);
+            if (bytes) bytes.set(chunk.subarray(offset, offset + count), filled);
+            offset += count;filled += count;state.received += count;
+            if (filled === part.bytes) {
+              if (bytes) complete(part.src, bytes.buffer);
+              index++;filled = 0;
+              const next = members[index];
+              // An urgent range may have filled a future GOP since this stream began; skip it on resume.
+              if (next && records.get(next.src)?.done) throw new DOMException('Cached GOP boundary', 'AbortError');
+              bytes = next ? new Uint8Array(next.bytes) : null;
+            }
+          }
+        });
+      })().catch(error => { if (!failed && error.name !== 'AbortError') fallback(); })
+        .finally(() => { fetching--;state.running = false;prefetch(); });
+      return state;
     }
     function fetchBytes(src, background = false) {
-      if (cache.has(src)) return cache.get(src);
-      fetching++;
-      const promise = fetch(new URL(src, base), { cache: 'force-cache', mode: 'same-origin', priority: background ? 'low' : 'high' }).then(response => {
-        if (!response.ok) throw new Error(`Video fragment: ${response.status}`);
-        return response.arrayBuffer();
-      }).finally(() => { fetching--; prefetch(); });
-      cache.set(src, promise);
-      return promise;
+      const item = record(src);
+      if (item.done) return item.promise;
+      const { pack, part } = locate(src);
+      let state = packets.get(pack.src);
+      if (src === manifest.init.src && !state?.running) state = startPacket(pack);
+      // The currently arriving GOP can finish on the stream; distant native seeks get an exact high-priority range.
+      if (!background && src !== manifest.init.src && (!state?.running || part.offset + part.bytes - state.received > part.bytes)) urgent(src);
+      return item.promise;
+    }
+    function canPrepare() {
+      if (document.hidden) return false;
+      const page = video.closest('[data-page]');
+      if (page && !page.classList.contains('page--active')) return false;
+      if (!hadFrame || (video.style.opacity !== '0' && desired < manifest.fragments.at(-1).start)) return true;
+      if (performance.now() - lastScroll < 700 || !secondVideo || secondVideo.readyState < 2 || !Number.isFinite(secondVideo.duration) || secondVideo.duration <= 0) return false;
+      const ranges = secondVideo.buffered;
+      for (let index = 0; index < ranges.length; index++) {
+        if (ranges.start(index) <= .00001 && ranges.end(index) >= secondVideo.duration - .00001) return true;
+      }
+      return false;
     }
     function prefetch() {
-      if (failed || !initialized || document.hidden || video.style.opacity === '0' || desired >= manifest.fragments.at(-1).start) return;
-      const page = video.closest('[data-page]');
-      if (page && !page.classList.contains('page--active')) return;
-      // One low-priority request prepares future frames without crowding out the next transition.
-      while (fetching < 1) {
-        const fragment = needed().find(fragment => !cache.has(fragment.src) && !contains(fragment))
-          || manifest.fragments.find(fragment => !cache.has(fragment.src));
-        if (!fragment) break;
-        fetchBytes(fragment.src, true).catch(() => fallback());
+      if (failed || !initialized) return;
+      if (!canPrepare()) {
+        for (const state of packets.values()) if (state.running && !state.controller.signal.aborted) { stats.cancels++;state.controller.abort(); }
+        return;
       }
+      if ([...packets.values()].some(state => state.running)) return;
+      const pack = manifest.packs.find(pack => pack.parts.some(part => !records.get(part.src)?.done));
+      if (pack) startPacket(pack);
     }
+    video.addEventListener('loadeddata', () => { hadFrame = true;prefetch(); }, { once: true });
+    document.addEventListener('visibilitychange', prefetch);
+    window.addEventListener('site:page', prefetch);
+    window.addEventListener('scroll', () => {
+      lastScroll = performance.now();clearTimeout(idleTimer);prefetch();idleTimer = setTimeout(prefetch, 700);
+    }, { passive: true });
+    ['progress', 'loadeddata', 'canplaythrough'].forEach(event => secondVideo?.addEventListener(event, prefetch));
     function update(method, ...args) {
       return new Promise((resolve, reject) => {
         const clean = () => ['updateend', 'error', 'abort'].forEach(name => buffer.removeEventListener(name, done));
@@ -94,10 +213,10 @@
       }
     }
     async function pump() {
-      if (failed || running || !initialized) return;
+      if (failed || running || !initialized || (framesActive && hadFrame)) return;
       running = true;
       try {
-        while (!failed) {
+        while (!failed && (!framesActive || !hadFrame)) {
           await trim(needed());
           const fragment = needed().find(fragment => !contains(fragment));
           if (!fragment) break;
@@ -123,18 +242,25 @@
         const response = await fetch(base, { cache: 'force-cache', mode: 'same-origin' });
         if (!response.ok) throw new Error('Video manifest unavailable');
         manifest = await response.json();
+        if (!manifest.packs) manifest.packs = [manifest.init, ...manifest.fragments].map(part => ({ src: part.src, bytes: part.bytes, parts: [{ ...part, offset: 0 }] }));
         const mime = `video/mp4; codecs="${manifest.codec}"`;
         if (!MediaSource.isTypeSupported(mime) || !(manifest.duration > 0) || !manifest.fragments?.length) throw new Error('Unsupported video manifest');
         buffer = media.addSourceBuffer(mime);
         media.duration = manifest.duration;
-        await update('appendBuffer', await fetchBytes(manifest.init.src));
+        const init = await fetchBytes(manifest.init.src);
+        await update('appendBuffer', init);
         initialized = true;
+        resolveSource({ manifest, init, read(src) { return failed ? Promise.reject(new Error('Packet source unavailable')) : fetchBytes(src); } });
         pump();
         prefetch();
       } catch { fallback(); }
     }, { once: true });
     video.src = objectUrl;
     video.load();
-    return { ensure(time) { if (!failed && Number.isFinite(time)) { desired = time; pump(); prefetch(); } } };
+    return {
+      getSource() { return sourceReady; },
+      useFrames(enabled) { framesActive = Boolean(enabled); if (!framesActive || !hadFrame) pump(); prefetch(); },
+      ensure(time) { if (!failed && Number.isFinite(time)) { desired = time; if (!framesActive) pump(); prefetch(); } }
+    };
   };
 })();

@@ -21,6 +21,11 @@
   // Keep one seek per clip in flight; decoding follows the latest scroll position.
   function seekLatest(clip) {
     clip.stream?.ensure(clip.desiredTime);
+    if (clip.framePlayer && !clip.framePlayer.failed) {
+      if (active && playhead.progress < .5 && !document.hidden) clip.framePlayer.resume();
+      else clip.framePlayer.suspend();
+      return;
+    }
     if (!clip.ready || clip.failed || clip.video.seeking || Math.abs(clip.video.currentTime - clip.desiredTime) < .001) return;
     clip.video.currentTime = clip.desiredTime;
   }
@@ -112,6 +117,7 @@
   }
   function enter(route, index = null) {
     active = route === 'home';
+    if (!active) clips.forEach(clip => clip.framePlayer?.suspend());
     if (!active) { resizeProgress = null; trigger?.disable(false); return; }
     if (trigger) {
       trigger.enable(false, false);
@@ -121,9 +127,27 @@
         clips.forEach(clip => {
           const source = hostedMedia ? clip.video.dataset.hostedSrc : clip.video.dataset.src;
           clip.video.preload = 'auto';
-          clip.stream = hostedMedia && clip.video.dataset.streamManifest
+          clip.stream = clip.video.dataset.streamManifest
             ? window.createScrollMedia?.(clip.video, clip.video.dataset.streamManifest, source) : null;
           if (!clip.stream) { clip.video.src = source; clip.video.load(); }
+          if (clip.stream && window.createScrollFrames) {
+            window.createScrollFrames(clip.video, clip.stream, {
+              getFrame: () => Math.floor(clip.desiredTime * clip.fps),
+              onReady(player) {
+                if (!active || playhead.progress >= .5 || document.hidden) { player.suspend(); return; }
+                clip.ready = true; clip.stream.useFrames?.(true); render();
+              },
+              onFallback() {
+                clip.stream.useFrames?.(false);
+                clip.ready = clip.video.readyState >= 2; render();
+              }
+            }).then(player => {
+              if (!player || player.failed) return;
+              clip.framePlayer = player; clip.stream.useFrames?.(true);
+              if (!active || playhead.progress >= .5 || document.hidden) player.suspend();
+              render();
+            });
+          }
         });
       }
     }
@@ -131,6 +155,10 @@
   }
   window.addEventListener('site:page', event => enter(event.detail.route, event.detail.homeSection));
   const initial = location.hash.slice(1);
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) clips.forEach(clip => clip.framePlayer?.suspend());
+    else if (active) render();
+  });
   if (['', 'home', 'stone', 'rubbing', 'hall'].includes(initial)) enter('home', Math.max(0, scenes.findIndex(scene => scene.id === initial)));
   Promise.allSettled([document.fonts.ready, ...images.map(image => image.decode())]).then(() => {
     if (!active) return;
