@@ -77,4 +77,14 @@ for (const video of manifest.videos) {
   videos.push({ file: video.original, bytes: video.size, sha256 });
 }
 assert(bytes < 1_000_000_000, 'Pages artifact exceeds 1 GB.');
+const indexFile = path.join(output, 'index.html');
+const html = fs.readFileSync(indexFile, 'utf8');
+let hostedHtml = html;
+for (const video of manifest.videos) {
+  const releaseUrl = `https://github.com/WWW502746/WWW502746.github.io/releases/download/v5-media-20261012/${path.posix.basename(video.original)}`;
+  hostedHtml = hostedHtml.replace(`data-hosted-src="${releaseUrl}"`, `data-hosted-src="${video.original}"`);
+  assert(hostedHtml.includes(`data-hosted-src="${video.original}"`), 'Missing same-origin video source.');
+}
+fs.writeFileSync(indexFile, hostedHtml);
+bytes += Buffer.byteLength(hostedHtml) - Buffer.byteLength(html);
 console.log(JSON.stringify({ output, files, bytes, videos }, null, 2));
