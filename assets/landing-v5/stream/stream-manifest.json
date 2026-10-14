@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "videos": [
+    {
+      "id": "stone",
+      "original": "assets/landing-v5/transition-source-4k60.mp4",
+      "size": 225491078,
+      "originalSha256": "91150595594c802f7dda6e5b8a28b19f3d91e7a7c25d02f2c16a0036d43f8aef",
+      "orderedParts": [
+        {
+          "path": "assets/landing-v5/stream/stone-01.bin",
+          "size": 75163693,
+          "sha256": "4bfd285375c38d6311ff7771d4285b9fb3be1586cfa1e838f6383f3bc2e9944a"
+        },
+        {
+          "path": "assets/landing-v5/stream/stone-02.bin",
+          "size": 75163693,
+          "sha256": "28ea906fa8276144f4fd2e204ba3c476bfe804a9aa22bed3807018f4bcf2846f"
+        },
+        {
+          "path": "assets/landing-v5/stream/stone-03.bin",
+          "size": 75163692,
+          "sha256": "58ae3c9c702af6ac49adc110a89c6de14f61532a7680976284cd81871f41ca87"
+        }
+      ]
+    },
+    {
+      "id": "rubbing-hall",
+      "original": "assets/landing-v5/transition-rubbing-hall.mp4",
+      "size": 61775105,
+      "originalSha256": "96bc21350331c1a6dd8f41654acdafcb34bb6949ff6ec944f06a418ecb7a5ea3",
+      "orderedParts": [
+        {
+          "path": "assets/landing-v5/stream/rubbing-hall.bin",
+          "size": 61775105,
+          "sha256": "96bc21350331c1a6dd8f41654acdafcb34bb6949ff6ec944f06a418ecb7a5ea3"
+        }
+      ]
+    }
+  ]
+}

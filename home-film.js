@@ -3,7 +3,8 @@
   const home = film.closest('[data-page="home"]');
   const clips = [...film.querySelectorAll('.transition-film')].map(video => ({
     video, fps: Number(video.dataset.fps), frames: Number(video.dataset.frames),
-    lastFrame: Number(video.dataset.lastFrame), desiredTime: 0, ready: false, failed: false
+    lastFrame: Number(video.dataset.lastFrame), desiredTime: 0, targetTime: 0, updatedAt: 0,
+    speed: 0, playDenied: false, presenting: false, ready: false, failed: false
   }));
   const status = film.querySelector('#media-status');
   const scenes = [...film.querySelectorAll('.scene')];
@@ -15,26 +16,76 @@
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const hostedMedia = location.hostname === 'www502746.github.io';
   const playhead = { progress: 0 };
-  let trigger, active = false, loaded = false, resizeProgress = null, endSince = null;
+  let trigger, active = false, resizeProgress = null, endSince = null, stopTimer;
   const ramp = (value, start, end) => Math.max(0, Math.min(1, (value - start) / (end - start)));
 
-  // Keep one seek per clip in flight; decoding follows the latest scroll position.
+  // Forward scrolling uses the sequential decoder; reverse and stopped positions seek exactly.
   function seekLatest(clip) {
-    if (!clip.ready || clip.failed || clip.video.seeking || Math.abs(clip.video.currentTime - clip.desiredTime) < .001) return;
-    clip.video.currentTime = clip.desiredTime;
+    if (!active || document.hidden || clip !== clips[playhead.progress < .5 ? 0 : 1] || !clip.ready || clip.failed) return;
+    const video = clip.video, difference = clip.desiredTime - video.currentTime;
+    const movingForward = clip.speed >= .25 && performance.now() - clip.updatedAt < 100;
+    const buffered = [...Array(video.buffered.length)].some((_, i) =>
+      clip.desiredTime >= video.buffered.start(i) && clip.desiredTime <= video.buffered.end(i));
+    if (movingForward && !video.ended && !clip.playDenied && difference > -.1 && (difference < .5 || !buffered)) {
+      if (video.seeking) return;
+      const rate = Math.max(.25, Math.min(4, clip.speed + difference * 4));
+      if (Math.abs(video.playbackRate - rate) > .05) video.playbackRate = rate;
+      if (video.paused) video.play().catch(error => { if (error.name !== 'AbortError') clip.playDenied = true; });
+      return;
+    }
+    video.pause();
+    if (!video.seeking && !clip.presenting && Math.abs(difference) >= .0001) {
+      clip.presenting = typeof video.requestVideoFrameCallback === 'function';
+      if (clip.presenting) {
+        let deadline;
+        const callback = video.requestVideoFrameCallback(() => {
+          clearTimeout(deadline); clip.presenting = false; seekLatest(clip);
+        });
+        deadline = setTimeout(() => { video.cancelVideoFrameCallback(callback); clip.presenting = false; seekLatest(clip); }, 150);
+      }
+      video.currentTime = clip.desiredTime;
+    }
+  }
+  function loadClip(clip) {
+    if (clip.loading) return clip.loading;
+    const video = clip.video;
+    // Cache the original bytes before playback so scroll seeks never wait on remote ranges.
+    clip.loading = (hostedMedia && video.dataset.streamParts
+      ? Promise.all(video.dataset.streamParts.split('|').map(async url => {
+          const response = await fetch(url, { cache: 'force-cache' });
+          if (!response.ok) throw new Error(`Video load failed: ${response.status}`);
+          return response.blob();
+        })).then(parts => URL.createObjectURL(new Blob(parts, { type: 'video/mp4' })))
+      : Promise.resolve(hostedMedia ? video.dataset.hostedSrc : video.dataset.src)
+    ).then(source => { video.preload = 'auto'; video.src = source; video.load(); })
+      .catch(() => { clip.failed = true; if (active) render(); });
+    return clip.loading;
   }
   function render() {
     const t = playhead.progress * 2;
     const local = [Math.min(t, 1), Math.max(0, t - 1)];
     const current = t < 1 ? 0 : 1;
+    // Give the large first clip bandwidth before preloading the next transition.
+    if (active && trigger && t >= .84 && trigger.progress >= .42
+      && (!hostedMedia || clips[0].ready || clips[0].failed)) loadClip(clips[1]);
+    const now = performance.now();
     clips.forEach((clip, i) => {
-      const frame = Math.round(ramp(local[i], .12, .84) * (clip.frames - 1));
+      const motion = ramp(local[i], .12, .84);
+      const frame = Math.round(motion * (clip.frames - 1));
+      const target = motion * (clip.frames - 1) / clip.fps;
+      const elapsed = now - clip.updatedAt;
+      clip.speed = elapsed > 0 && elapsed < 150 ? (target - clip.targetTime) * 1000 / elapsed : 0;
+      if (clip.speed > 8) clip.speed = 0;
+      clip.targetTime = target; clip.updatedAt = now;
       // The second clip's last frame is very short; retain its measured midpoint.
       clip.desiredTime = Math.min(clip.lastFrame, (frame + .5) / clip.fps);
-      seekLatest(clip);
+      if (i === current) seekLatest(clip);
+      else if (!clip.video.paused) clip.video.pause();
       clip.video.style.opacity = current === i && clip.ready && !clip.failed ? 1 : 0;
       bars[i].style.transform = `scaleX(${local[i]})`;
     });
+    clearTimeout(stopTimer);
+    stopTimer = setTimeout(() => { clips[current].speed = 0; seekLatest(clips[current]); }, 100);
     const first = clips[0].ready && !clips[0].failed;
     const second = clips[1].ready && !clips[1].failed;
     images[0].style.opacity = 1 - ramp(t, first ? .12 : .35, first ? .155 : .78);
@@ -100,7 +151,11 @@
     }).scrollTrigger;
     trigger.disable(false);
     clips.forEach(clip => {
-      clip.video.addEventListener('loadeddata', () => { clip.ready = true; render(); });
+      clip.video.addEventListener('loadeddata', () => {
+        clip.ready = true;
+        if (active && hostedMedia && clip === clips[0]) loadClip(clips[1]);
+        render();
+      });
       clip.video.addEventListener('seeked', () => seekLatest(clip));
       clip.video.addEventListener('error', () => { clip.failed = true; render(); });
     });
@@ -111,14 +166,11 @@
   }
   function enter(route, index = null) {
     active = route === 'home';
-    if (!active) { resizeProgress = null; trigger?.disable(false); return; }
+    if (!active) { resizeProgress = null; trigger?.disable(false); clearTimeout(stopTimer); clips.forEach(clip => clip.video.pause()); return; }
     if (trigger) {
       trigger.enable(false, false);
       ScrollTrigger.refresh();
-      if (!loaded) {
-        loaded = true;
-        clips.forEach(clip => { clip.video.preload = 'auto'; clip.video.src = hostedMedia ? clip.video.dataset.hostedSrc : clip.video.dataset.src; clip.video.load(); });
-      }
+      loadClip(clips[0]);
     }
     if (index !== null) goTo(index, 'instant');
   }
@@ -132,4 +184,8 @@
     if (index >= 0) goTo(index, 'instant');
   });
   reduced.addEventListener('change', () => location.reload());
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) { clearTimeout(stopTimer); clips.forEach(clip => clip.video.pause()); }
+    else if (active) render();
+  });
 })();
