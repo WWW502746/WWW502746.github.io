@@ -20,6 +20,7 @@
 
   // Keep one seek per clip in flight; decoding follows the latest scroll position.
   function seekLatest(clip) {
+    clip.stream?.ensure(clip.desiredTime);
     if (!clip.ready || clip.failed || clip.video.seeking || Math.abs(clip.video.currentTime - clip.desiredTime) < .001) return;
     clip.video.currentTime = clip.desiredTime;
   }
@@ -117,7 +118,13 @@
       ScrollTrigger.refresh();
       if (!loaded) {
         loaded = true;
-        clips.forEach(clip => { clip.video.preload = 'auto'; clip.video.src = hostedMedia ? clip.video.dataset.hostedSrc : clip.video.dataset.src; clip.video.load(); });
+        clips.forEach(clip => {
+          const source = hostedMedia ? clip.video.dataset.hostedSrc : clip.video.dataset.src;
+          clip.video.preload = 'auto';
+          clip.stream = hostedMedia && clip.video.dataset.streamManifest
+            ? window.createScrollMedia?.(clip.video, clip.video.dataset.streamManifest, source) : null;
+          if (!clip.stream) { clip.video.src = source; clip.video.load(); }
+        });
       }
     }
     if (index !== null) goTo(index, 'instant');

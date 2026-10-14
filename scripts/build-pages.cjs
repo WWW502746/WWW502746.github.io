@@ -7,6 +7,7 @@ const source = path.resolve(__dirname, '..');
 const output = process.argv[2] ? path.resolve(process.argv[2]) : path.join(source, '_stage_pages');
 assert(!fs.existsSync(output), 'Choose a new output directory; build-pages does not delete existing files.');
 const manifest = JSON.parse(fs.readFileSync(path.join(source, 'assets/landing-v5/stream/stream-manifest.json'), 'utf8'));
+const streamedStone = fs.readFileSync(path.join(source, 'index.html'), 'utf8').includes('data-stream-manifest="assets/landing-v5/mse/stone/manifest.json"');
 assert.equal(manifest.version, 1);
 assert(Array.isArray(manifest.videos) && manifest.videos.length > 0);
 for (const video of manifest.videos) {
@@ -34,10 +35,20 @@ function copySite(relative = '') {
   }
 }
 copySite();
+if (streamedStone) {
+  const stream = JSON.parse(fs.readFileSync(path.join(output, 'assets/landing-v5/mse/stone/manifest.json'), 'utf8'));
+  for (const part of [stream.init, ...stream.fragments]) {
+    assert(/^(?:init\.mp4|\d{3}\.m4s)$/.test(part.src), 'Invalid streamed video part path.');
+    const data = fs.readFileSync(path.join(output, 'assets/landing-v5/mse/stone', part.src));
+    assert.equal(data.length, part.bytes);
+    assert.equal(crypto.createHash('sha256').update(data).digest('hex'), part.sha256, 'Streamed video part changed.');
+  }
+}
 
 const buffer = Buffer.alloc(4 * 1024 * 1024);
 const videos = [];
 for (const video of manifest.videos) {
+  if (streamedStone && video.id === 'stone') continue;
   const destination = path.join(output, video.original);
   fs.mkdirSync(path.dirname(destination), { recursive: true });
   const target = fs.openSync(destination, 'w');
@@ -81,6 +92,7 @@ const indexFile = path.join(output, 'index.html');
 const html = fs.readFileSync(indexFile, 'utf8');
 let hostedHtml = html;
 for (const video of manifest.videos) {
+  if (streamedStone && video.id === 'stone') continue;
   const releaseUrl = `https://github.com/WWW502746/WWW502746.github.io/releases/download/v5-media-20261012/${path.posix.basename(video.original)}`;
   hostedHtml = hostedHtml.replace(`data-hosted-src="${releaseUrl}"`, `data-hosted-src="${video.original}"`);
   assert(hostedHtml.includes(`data-hosted-src="${video.original}"`), 'Missing same-origin video source.');
