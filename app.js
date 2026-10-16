@@ -9,7 +9,9 @@ const detailPage = document.querySelector(".detail-page");
 const artworkButtons = [...document.querySelectorAll(".work")];
 const artifactViewers = [...document.querySelectorAll("[data-artifact-viewer]")];
 const glyphFieldFrame = document.querySelector(".glyph-field-frame");
-if (glyphFieldFrame) {
+const mobileExhibition = matchMedia('(max-width:800px), (max-width:1100px) and (pointer:coarse)').matches;
+if (glyphFieldFrame && mobileExhibition) glyphFieldFrame.closest('.works-module--glyph').remove();
+if (glyphFieldFrame && !mobileExhibition) {
   const localPreview = ["localhost", "127.0.0.1"].includes(location.hostname) && location.port === "4175";
   glyphFieldFrame.src = localPreview ? "http://127.0.0.1:3002/lab/glyph-field" : "/lab/glyph-field/";
 }

@@ -183,7 +183,7 @@
     document.body.classList.toggle('home-film-active',activeRoute()==='home');
     const page = document.querySelector('.works-page');
     if (activeRoute() !== 'works') document.body.classList.remove('is-glyph-field');
-    else document.body.classList.toggle('is-glyph-field', page.scrollTop >= page.clientHeight * .5);
+    else document.body.classList.toggle('is-glyph-field', worksModules.length > 1 && page.scrollTop >= page.clientHeight * .5);
   }
   function restore(index = null) {
     if (index !== null && activeRoute()==='home') window.homeFilm?.goTo(index, 'instant');
@@ -251,7 +251,7 @@
     document.body.classList.toggle('has-page-motion',desktop.matches);restore();syncRoute();
   };
   document.querySelector('.works-page').addEventListener('scroll', () => {
-    if (activeRoute() === 'works') document.body.classList.toggle('is-glyph-field', document.querySelector('.works-page').scrollTop >= innerHeight * .5);
+    if (activeRoute() === 'works') document.body.classList.toggle('is-glyph-field', worksModules.length > 1 && document.querySelector('.works-page').scrollTop >= innerHeight * .5);
   }, {passive:true});
   desktop.addEventListener('change',syncDesktop); syncDesktop();
   const handleWheel = (event, forwarded = false) => {
