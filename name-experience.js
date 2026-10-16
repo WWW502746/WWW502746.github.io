@@ -1,5 +1,6 @@
-import {styles, spectrum, hashText, readName, candidates, profileFor, validSession} from './name-core.js?v=v4';
-import {finishOptions, defaultFinish, normalizeFinish, materialFiles, paintRubbing} from './name-finish.js?v=v4';
+import {styles, spectrum, hashText, readName, candidates, profileFor, validSession} from './name-core.js?v=xunzi20261015';
+import {finishOptions, defaultFinish, normalizeFinish, materialFiles, paintRubbing} from './name-finish.js?v=xunzi20261015';
+import {mountResultFlip} from './name-result-flip.js?v=v6result20261015';
 
 const root = document.getElementById('name-app');
 const page = root.closest('[data-page]');
@@ -8,9 +9,29 @@ const glyphCache = new Map();
 const cleanGlyphCache = new Map();
 const loadedFonts = new Set();
 const today = () => new Date().toLocaleDateString('sv-SE', {timeZone: 'Asia/Shanghai'});
-let coverage, profiles, assetsPromise, materialsPromise, materials, texture, busy = false, restored = false;
+let coverage, profiles, historicalPersonas, assetsPromise, materialsPromise, materials, texture, busy = false, restored = false;
 let state = {view: 'entry', name: '王子墨', index: 0, choices: [null, null, null], finish: {...defaultFinish}, date: today()};
 let active = null;
+let paperRolls = null, paperMount = 0;
+let resultFlip = null;
+
+function disposePaperRolls() {
+  paperMount++;
+  paperRolls?.dispose();
+  paperRolls = null;
+}
+
+function mountCraftMotion() {
+  const mount = ++paperMount, controls = root.querySelector('.craft-controls');
+  import('./name-paper-motion.js?v=xunzi20261015').then(({mountPaperRolls}) => {
+    if (mount !== paperMount || !controls?.isConnected || !page.classList.contains('page--active')) return;
+    const controller = mountPaperRolls(controls);
+    if (mount !== paperMount || !controls.isConnected || !page.classList.contains('page--active')) controller.dispose();
+    else paperRolls = controller;
+  }).catch(() => { /* Static paper samples remain usable when motion cannot load. */ });
+}
+
+root.getPaperMotionState = () => paperRolls?.metrics() || [];
 
 const esc = value => String(value).replace(/[&<>"']/g, char => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[char]));
 const icon = name => `<i data-lucide="${name}" aria-hidden="true"></i>`;
@@ -44,7 +65,7 @@ function loadImage(src) {
 async function assets() {
   if (!assetsPromise) {
     assetsPromise = Promise.all([
-      getJSON('assets/name/coverage.json?v=v4'), getJSON('assets/name/profiles.json?v=v4'),
+      getJSON('assets/name/coverage.json'), getJSON('assets/name/profiles.json'), getJSON('assets/name/historical-personas.json'),
       loadImage('assets/surface-02.png'),
       ...styles.map(async style => {
         if (loadedFonts.has(style.id)) return;
@@ -53,8 +74,9 @@ async function assets() {
         document.fonts.add(font);
         loadedFonts.add(style.id);
       })
-    ]).then(([map, library, image]) => {
-      coverage = map; profiles = library; texture = image;
+    ]).then(([map, library, history, image]) => {
+      if (!Array.isArray(history) || history.length !== 16 || history.some((person, index) => !person || person.number !== index + 1 || person.persona !== library.profiles[index].name || ['person', 'personLabel', 'traits', 'bridge', 'roles'].some(field => typeof person[field] !== 'string' || !person[field].trim()) || !Array.isArray(person.careerParagraphs) || !person.careerParagraphs.length || person.careerParagraphs.some(text => typeof text !== 'string' || !text.trim()))) throw new Error('历史人物资料暂时无法载入，请重试。');
+      coverage = map; profiles = library; historicalPersonas = history; texture = image;
     }).catch(error => { assetsPromise = null; throw error; });
   }
   return assetsPromise;
@@ -122,12 +144,18 @@ function cleanGlyph(char, style) {
 }
 
 function render(focus = false) {
+  disposePaperRolls();
+  resultFlip?.dispose();
+  resultFlip = null;
   if (page.classList.contains('page--active')) document.body.dataset.view = state.view;
   root.innerHTML = state.view === 'entry' ? entry() : state.view === 'review' ? review() : state.view === 'pick' ? pick() : state.view === 'craft' ? craft() : result();
   window.lucide?.createIcons();
   window.applyLettering?.(root);
-  if (state.view === 'craft') paintCraft();
-  if (state.view === 'result') paintPoster(root.querySelector('#name-poster'));
+  if (state.view === 'craft') { paintCraft(); mountCraftMotion(); }
+  if (state.view === 'result') {
+    paintPoster(root.querySelector('#name-poster'));
+    resultFlip = mountResultFlip(root, historicalPersonas);
+  }
   if (focus && page.classList.contains('page--active')) {
     window.scrollTo({top: 0, behavior: 'instant'});
     root.querySelector('[data-view-heading]')?.focus({preventScroll: true});
@@ -176,10 +204,20 @@ function pick() {
 
 function craft() {
   const short = {black:'乌金',graphite:'石墨',cinnabar:'朱砂',ochre:'赭石',raw:'生宣',cotton:'棉麻',antique:'仿古',cicada:'蝉翼',coarse:'粗麻',cracked:'裂纹'};
-  const group = (key, title) => `<fieldset class="material-group material-group--${key}"><legend>${title}</legend><div class="material-options">${finishOptions[key].map(([id,label]) => `<button class="material-option" data-finish-key="${key}" data-finish-id="${id}" aria-label="${label}" aria-pressed="${state.finish[key] === id}">${key === 'carving' ? `<i class="carving-sample carving-sample--${id}" aria-hidden="true">字</i>` : ['stone','paper'].includes(key) ? `<img src="assets/name/materials/${key}-${id}.webp" alt="" draggable="false">` : key === 'ink' ? `<i class="ink-swatch ink-swatch--${id}" aria-hidden="true"></i>` : ''}<span>${short[id] || label}</span></button>`).join('')}</div></fieldset>`;
-  const slider = (key, label, left, right) => `<div class="finish-range"><div class="finish-range__labels"><span>${left}</span><output for="finish-${key}">${Math.round(state.finish[key] * 100)}%</output><span>${right}</span></div><input id="finish-${key}" type="range" min="0" max="100" step="1" value="${Math.round(state.finish[key] * 100)}" data-finish-range="${key}" aria-label="${label}" style="--value:${state.finish[key] * 100}%"></div>`;
-  return `<div class="experiment-craft"><div class="craft-controls"><header><h1 data-view-heading tabindex="-1">制拓</h1><p>${esc(state.name)}</p></header>${group('carving','刻法')}${group('stone','石材')}${group('ink','墨色')}${group('paper','纸张')}<fieldset class="material-group material-group--pressure"><legend>拓印</legend><div class="pressure-controls"><div class="pressure-presets">${finishOptions.technique.map(([id,label]) => `<button data-finish-key="technique" data-finish-id="${id}" aria-pressed="${state.finish.pressure === (id === 'light' ? 0 : 1)}">${label}</button>`).join('')}</div>${slider('pressure','拓印轻重','轻','重')}</div></fieldset><fieldset class="material-group material-group--weather"><legend>风化</legend>${slider('weather','风化程度','完整','残拓')}</fieldset></div>
-    <aside class="craft-preview"><div class="poster-paper"><canvas id="name-poster" width="900" height="1260" role="img" aria-label="${esc(state.name)}的当前拓片预览"></canvas></div><p>数字拓片 <span>· 非真实碑刻拓本</span></p></aside>
+  const inkColors = {black:'#141717',graphite:'#68716b',cinnabar:'#98513e',ochre:'#8a7555'};
+  const sample = (key, id, label) => key === 'carving'
+    ? `<span class="carve-sheet carve-sheet--${id}">${label}</span>`
+    : key === 'stone' ? `<img class="stone-material" src="assets/name/craft-ui/stone-${id}.png" alt="" draggable="false"><span class="option-label">${label}</span>`
+    : key === 'paper' ? `<span class="paper-name option-label">${label}</span><span class="paper-visual"><img class="paper-render paper-closed" src="assets/name/craft-ui/paper-${id}-closed.png" alt="" draggable="false"><img class="paper-render paper-open" src="assets/name/craft-ui/paper-${id}-open.png" alt="" draggable="false"></span>`
+    : `<svg class="ink-mark" viewBox="0 0 34 20" aria-hidden="true"><path d="M3 8 7 4 13 3 22 2 29 6 31 9 29 14 23 17 16 16 9 17 4 14 2 11Z" fill="${inkColors[id]}" stroke="#90968b" stroke-width=".65"/></svg><span class="option-label">${label}</span>`;
+  const group = (key, title) => {
+    const options = key === 'ink' ? ['black','graphite','cinnabar','ochre'].map(id => finishOptions.ink.find(option => option[0] === id)) : finishOptions[key];
+    return `<fieldset class="material-group material-group--${key}"><legend>${title}</legend><div class="material-options">${options.map(([id,label]) => `<button class="material-option material-option--${key}" data-finish-key="${key}" data-finish-id="${id}" aria-label="${label}" aria-pressed="${state.finish[key] === id}">${sample(key, id, short[id] || label)}</button>`).join('')}</div></fieldset>`;
+  };
+  const slider = (key, title, label, left, right) => `<fieldset class="material-group material-group--${key}"><legend>${title}</legend><div class="finish-range">${key === 'pressure' ? `<button class="range-end" data-finish-key="technique" data-finish-id="light" aria-label="设为轻拓" aria-pressed="${state.finish.pressure === 0}">${left}</button>` : `<span class="range-end">${left}</span>`}<input id="finish-${key}" type="range" min="0" max="100" step="1" value="${Math.round(state.finish[key] * 100)}" data-finish-range="${key}" aria-label="${label}" style="--value:${state.finish[key] * 100}%"><output for="finish-${key}">${Math.round(state.finish[key] * 100)}%</output>${key === 'pressure' ? `<button class="range-end" data-finish-key="technique" data-finish-id="heavy" aria-label="设为重拓" aria-pressed="${state.finish.pressure === 1}">${right}</button>` : `<span class="range-end">${right}</span>`}</div></fieldset>`;
+  return `<div class="experiment-craft"><header class="craft-heading"><h1 data-view-heading tabindex="-1">制拓</h1><p>${esc(state.name)}</p></header>
+    <div class="craft-workspace"><div class="craft-controls">${group('carving','刻法')}<div class="craft-materials">${group('stone','石材')}${group('ink','墨色')}</div>${group('paper','纸张')}<div class="craft-sliders">${slider('pressure','拓印','拓印轻重','轻拓','重拓')}${slider('weather','风化','风化程度','完整','残拓')}</div></div>
+    <figure class="craft-preview"><p class="craft-preview-title">拓片预览</p><div class="poster-paper"><canvas id="name-poster" width="900" height="1260" role="img" aria-label="${esc(state.name)}的当前拓片预览"></canvas></div><figcaption>数字拓片</figcaption></figure></div>
     <div class="scene-actions"><button data-action="review">${icon('arrow-left')} 返回确认</button><button class="name-primary" data-action="make">完成拓片 ${icon('arrow-right')}</button></div></div>${footer(3)}`;
 }
 
@@ -217,15 +255,20 @@ function result() {
       <h1 data-view-heading tabindex="-1">${esc(persona.name)}</h1>
       <p class="name-result__theme">${esc(persona.groupInfo.theme)}</p>
       <span class="name-result__rule" aria-hidden="true"></span>
-      <div class="name-result__trace"><p>此次所选字形 <span>GLYPH COMPOSITION</span></p><ol>${chars().map((char, index) => {
+      <section class="name-result__trace" id="selected-glyphs" aria-labelledby="selected-glyphs-title">
+        <div class="name-trace-heading"><div><p class="name-kicker">所选字形 · YOUR SELECTION</p><h2 id="selected-glyphs-title">字的来处</h2></div><span class="name-trace-count">${chars().length} 字</span></div>
+        <p class="name-trace-intro">点开一个字，认识它的字形气质与创作者。</p>
+        <ol>${chars().map((char, index) => {
         const style = styles.find(item => item.id === state.choices[index]);
-        return `<li><span>${pad(index + 1)}</span><img src="${glyph(char, style).url}" alt="${esc(char)}"></li>`;
-      }).join('')}</ol></div>
+        return `<li><button class="name-glyph-card" data-action="source" data-style="${style.id}" data-char="${esc(char)}" aria-label="查看「${esc(char)}」的字形来源，${esc(style.title)}" aria-haspopup="dialog"><span class="name-glyph-card__index">${pad(index + 1)}</span><img src="${glyph(char, style).url}" alt="${esc(char)}"><span class="name-glyph-card__style"><strong>${esc(style.label)}</strong><span>${esc(style.title)}</span></span><span class="name-glyph-card__source">查看字的来处 ${icon('arrow-up-right')}</span></button></li>`;
+      }).join('')}</ol>
+        <div class="name-trace-actions"><p>一笔一画，皆有来处。</p><button class="name-sources-cta" data-action="sources" aria-haspopup="dialog">${icon('book-open')} 查看全部字形来源 ${icon('arrow-right')}</button></div>
+      </section>
     </header>
     <aside class="name-result__print"><div class="name-result__print-head"><span>PERSONAL RUBBING</span><span>${id}</span></div>
       <canvas id="name-poster" width="900" height="1260" role="img" aria-label="${esc(state.name)}的个人拓片，书写人格${esc(persona.name)}"></canvas>
       <p class="name-result__materials"><span>拓印记录</span>${[finishLabel('stone'), finishLabel('ink'), finishLabel('paper'), finishLabel('technique')].join(' / ')}</p>
-      <div class="name-print-actions"><button data-action="download">${icon('download')} 保存个人拓片</button><button data-action="sources">${icon('arrow-up-right')} 查看字的来处</button></div><p class="name-message" role="status" id="name-download-message"></p>
+      <div class="name-print-actions"><button class="name-sources-cta" data-action="sources" aria-haspopup="dialog">${icon('book-open')} 查看字的来处 ${icon('arrow-up-right')}</button><button data-action="download">${icon('download')} 保存个人拓片</button></div><p class="name-message" role="status" id="name-download-message"></p>
     </aside>
     <section class="name-result__story" aria-labelledby="name-result-about">
       <p class="name-kicker">THE CHARACTER / 人格叙事</p>
@@ -275,7 +318,10 @@ dialog.addEventListener('click', event => {
 dialog.addEventListener('close', () => document.body.classList.remove('is-name-dialog'));
 
 function openSources(items) {
-  dialog.innerHTML = `<header><div><p class="name-kicker">TYPE / PROVENANCE</p><h2>字形来源</h2></div><button data-source-close aria-label="关闭字形来源" title="关闭">${icon('x')}</button></header><p class="name-source-notice">本次字形由开放字体与石面肌理合成，不对应真实碑刻、年代或碑面位置。</p><div class="name-source-list">${items.map(({char, style}) => `<article><img src="${glyph(char, style).url}" alt="${esc(char)}字形"><div><h3>${esc(char)} / ${style.title}</h3><p>${style.author}</p><p>${style.license || 'SIL Open Font License 1.1'}</p><a href="${style.sourceUrl || `https://github.com/google/fonts/tree/main/ofl/${style.repo}`}" target="_blank" rel="noopener noreferrer">字体项目 ${icon('arrow-up-right')}</a><a href="assets/name/fonts/${style.licenseFile || `${style.repo}-OFL.txt`}" target="_blank" rel="noopener noreferrer">许可原文 ${icon('arrow-up-right')}</a></div></article>`).join('')}</div>`;
+  dialog.innerHTML = `<header><div><p class="name-kicker">从你的名字，走近字的来处</p><h2>${items.length === 1 ? `「${esc(items[0].char)}」的来处` : '你选中的字，从这里来'}</h2></div><button data-source-close aria-label="关闭字形来源" title="关闭" autofocus>${icon('x')}</button></header>
+    <p class="name-source-lead">这些是你亲自选中的字形。沿着喜欢的笔画，继续认识它们的创作者。</p>
+    <div class="name-source-list">${items.map(({char, style}) => `<article><div class="name-source-specimen"><span>你选中的「${esc(char)}」</span><img src="${glyph(char, style).url}" alt="${esc(char)}字形"><strong>${esc(style.label)}</strong></div><div class="name-source-info"><h3>${esc(style.title)}</h3><p class="name-source-tags">${style.tags.map(tag => `<span>${esc(tag)}</span>`).join('')}</p><p class="name-source-connection">你选中了${esc(style.tags.join('、'))}的表达。这些字形特征也参与了你的书写人格解读。</p><dl><div><dt>字体创作者</dt><dd>${esc(style.author)}</dd></div><div><dt>字体授权</dt><dd>${esc(style.license || 'SIL Open Font License 1.1')}</dd></div></dl><div class="name-source-links"><a class="name-source-project" href="${style.sourceUrl || `https://github.com/google/fonts/tree/main/ofl/${style.repo}`}" target="_blank" rel="noopener noreferrer">了解字体与创作者 ${icon('arrow-up-right')}</a><a href="assets/name/fonts/${style.licenseFile || `${style.repo}-OFL.txt`}" target="_blank" rel="noopener noreferrer">查看授权原文 ${icon('arrow-up-right')}</a></div></div></article>`).join('')}</div>
+    <p class="name-source-notice">字形资料说明：本次字形由开放字体与石面肌理合成，不对应真实碑刻、年代或碑面位置。</p>`;
   window.lucide?.createIcons();
   dialog.showModal();
   document.body.classList.add('is-name-dialog');
@@ -442,8 +488,15 @@ async function enter() {
 }
 
 window.addEventListener('site:page', event => {
-  if (event.detail.route === 'name') { document.body.dataset.view = state.view; enter(); }
-  else { delete document.body.dataset.view; if (dialog.open) dialog.close(); }
+  if (event.detail.route === 'name') { document.body.dataset.view = state.view; enter(); if (state.view === 'craft' && !paperRolls) mountCraftMotion(); }
+  else { disposePaperRolls(); resultFlip?.finish(); delete document.body.dataset.view; if (dialog.open) dialog.close(); }
+});
+window.addEventListener('pageshow', event => {
+  if (event.persisted) resultFlip?.finish();
+  if (event.persisted && state.view === 'craft' && page.classList.contains('page--active')) {
+    disposePaperRolls();
+    mountCraftMotion();
+  }
 });
 render();
 if (page.classList.contains('page--active')) enter();

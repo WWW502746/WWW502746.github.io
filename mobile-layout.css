@@ -1,0 +1,132 @@
+/* Touch layouts share the approved imagery and leave the desktop composition intact. */
+@media (max-width: 800px), (max-width: 1100px) and (pointer: coarse) {
+  .archive-catalog .archive-object:nth-child(n) { margin-top: 0 !important; }
+  .archive-catalog .archive-object figure { height: 100% !important; }
+  .archive-catalog .archive-object { touch-action: manipulation; }
+  .archive-scene { height: 100svh; min-height: 620px; }
+  .archive-scene__inner { width: 100%; height: 100%; }
+  .archive-object--stele { top: 26%; left: 6%; width: 13%; height: 27%; }
+  .archive-object--floral { top: 26%; left: 26%; width: 24%; height: 24%; }
+  .archive-object--dragon { top: 51%; left: 22%; width: 56%; height: 32%; }
+  .archive-object--head { top: 26%; left: 75%; width: 14%; height: 20%; }
+  .archive-object--fragment { top: 56%; left: 81%; width: 14%; height: 13%; }
+  .archive-catalog .archive-object figcaption { top: -44px !important; left: 0 !important; min-width: 0; padding-left: 7px; gap: 3px; }
+  .archive-catalog .archive-object figcaption strong { font-size: 12px; letter-spacing: .08em; }
+  .archive-catalog .archive-object figcaption span, .archive-detail { display: none; }
+  .archive-catalog .archive-object--dragon figcaption { top: -18px !important; left: 8% !important; }
+  .archive-catalog .archive-object--fragment figcaption { top: -28px !important; }
+  .archive-catalog .scene-caption { bottom: 8%; left: 26%; font-size: 10px; }
+  .works-module--glyph { height: 100svh; min-height: 560px; overflow: hidden; }
+  .glyph-field-frame { height: 100%; min-height: 560px; }
+  .name-gateway { height: auto; min-height: 100svh; overflow: visible; }
+  .name-gateway .name-entry { min-height: max(680px, 100svh); height: auto; padding: 36svh var(--pad) 138px; align-items: flex-start; }
+  .name-gateway .name-entry__copy { width: 100%; margin-left: 0; }
+  .name-gateway .name-entry__image { height: 66%; object-position: 65% top; }
+  .name-gateway .name-entry::before { background: linear-gradient(0deg, #070808 12%, #070808e8 42%, #07080822 85%); }
+  .name-gateway h1 { font-size: clamp(64px, 15vw, 100px); }
+  .name-gateway__enter { min-height: 52px; margin-top: 30px; }
+  .name-gateway__footer { min-height: 90px; gap: 18px; font-size: 11px; }
+  .name-gateway__footer span:last-child { max-width: 190px; text-align: right; }
+
+  body.is-name:is([data-view="pick"], [data-view="review"], [data-view="craft"]) { overflow-y: auto; }
+  body.is-name:is([data-view="pick"], [data-view="review"], [data-view="craft"]) .site-header {
+    height: 72px; padding: 0 22px; display: flex; justify-content: space-between; gap: 20px;
+  }
+  body.is-name:is([data-view="pick"], [data-view="review"], [data-view="craft"]) .site-header nav,
+  body.is-name:is([data-view="pick"], [data-view="review"], [data-view="craft"]) .site-header .edition { display: none; }
+  body.is-name:is([data-view="pick"], [data-view="review"], [data-view="craft"]) .site-header .header-side { display: block; }
+  body.is-name:is([data-view="pick"], [data-view="review"], [data-view="craft"]) .site-header .menu-button { display: block; width: 44px; height: 44px; }
+  body.is-name:is([data-view="pick"], [data-view="review"], [data-view="craft"]) .site-header .menu-button i:first-child { top: 16px; }
+  body.is-name:is([data-view="pick"], [data-view="review"], [data-view="craft"]) .site-header .menu-button i:last-child { bottom: 16px; }
+  body.is-name:is([data-view="pick"], [data-view="review"], [data-view="craft"]) .brand small { display: none; }
+  body.is-name:is([data-view="pick"], [data-view="review"], [data-view="craft"]) .brand span { font-size: 26px; }
+  body.is-name:is([data-view="pick"], [data-view="review"]) .scene-actions { gap: 18px; flex-wrap: wrap; margin-top: 28px; }
+  body.is-name:is([data-view="pick"], [data-view="review"]) .scene-actions .name-primary { min-width: 150px; min-height: 52px; font-size: 18px; padding: 10px 16px; }
+  body.is-name:is([data-view="pick"], [data-view="review"]) .name-footer,
+  body.is-name[data-view="craft"] .name-footer {
+    width: auto; height: auto; min-height: 68px; margin: 0 22px; padding: 10px 0 max(12px, env(safe-area-inset-bottom));
+    display: block; font-size: 12px; border-top: 1px solid #d8d4c438; background: transparent;
+  }
+  body.is-name:is([data-view="pick"], [data-view="review"], [data-view="craft"]) .name-footer > span { display: none; }
+  body.is-name:is([data-view="pick"], [data-view="review"], [data-view="craft"]) .name-footer ol { width: 100%; gap: 8px; justify-content: space-between; }
+  body.is-name:is([data-view="pick"], [data-view="review"], [data-view="craft"]) .name-footer li { width: auto; padding: 12px 0; font-size: 12px; letter-spacing: 0; }
+  body.is-name:is([data-view="pick"], [data-view="review"], [data-view="craft"]) .name-footer li span { margin-right: 4px; }
+  body.is-name .experiment-pick { min-height: calc(100svh - 68px); padding: 100px 22px 26px; gap: 28px; }
+  body.is-name .pick-heading { position: static; display: flex; flex-direction: column; gap: 22px; margin-bottom: 0; }
+  body.is-name .pick-heading h1 { font-size: 36px; margin-bottom: 10px; }
+  body.is-name .pick-heading p { font-size: 14px; }
+  body.is-name .pick-progress { width: 100%; justify-content: space-between; gap: 12px; }
+  body.is-name .name-letters { display: flex; gap: 6px; }
+  body.is-name .name-letters button { min-width: 44px; width: 44px; min-height: 44px; }
+  body.is-name .paper-gallery { width: 100%; max-width: 620px; margin: auto; flex: 0 0 auto; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 18px; }
+  body.is-name .paper-number { min-height: 36px; font-size: 13px; }
+  body.is-name .name-confirm { gap: 0; }
+  body.is-name .experiment-review { min-height: calc(100svh - 68px); padding: 100px 22px 26px; gap: 30px; }
+  body.is-name .review-heading { display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px 24px; }
+  body.is-name .review-heading h1 { margin: 0; font-size: 44px; }
+  body.is-name .review-heading > p:last-child { width: 100%; padding: 0; border: 0; margin: 0; font-size: 16px; }
+  body.is-name .stone-gallery { display: grid; flex: 0 0 auto; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 18px; padding: 0; }
+  body.is-name .stone-specimen { width: 100%; max-width: none; }
+  body.is-name .stone-caption { display: flex; flex-direction: column; gap: 6px; padding: 8px 0; font-size: 11px; }
+  body.is-name .stone-edit { opacity: 1; font-size: 11px; }
+  body.is-name .experiment-review .scene-actions .name-primary { width: 100%; }
+  body.is-name .review-message:empty { display: none; }
+
+  body.is-name[data-view="craft"] { --u: 1px; overflow: visible; }
+  body.is-name[data-view="craft"] .name-page { height: auto; min-height: 100svh; }
+  body.is-name[data-view="craft"] #name-app { display: block; height: auto; padding-top: 72px; }
+  body.is-name[data-view="craft"] .experiment-craft {
+    width: 100%; height: auto; min-height: 0; padding: 26px 22px 24px; display: flex; flex-direction: column; gap: 28px;
+  }
+  body.is-name[data-view="craft"] .craft-heading { gap: 22px; }
+  body.is-name[data-view="craft"] .craft-heading h1 { font-size: 36px; letter-spacing: .08em; }
+  body.is-name[data-view="craft"] .craft-heading p { font-size: 16px; letter-spacing: .1em; }
+  body.is-name[data-view="craft"] .craft-workspace {
+    width: 100%; max-width: 640px; height: auto; margin: 0 auto; grid-template-columns: minmax(0, 1fr); gap: 36px;
+  }
+  body.is-name[data-view="craft"] .craft-controls { display: grid; grid-template-rows: none; gap: 28px; }
+  body.is-name[data-view="craft"] .material-group { height: auto; padding: 0; }
+  body.is-name[data-view="craft"] .material-group legend {
+    float: none; width: auto; height: auto; display: block; padding: 0; margin: 0 0 14px; font-size: 18px; line-height: 1.5; letter-spacing: .1em;
+  }
+  body.is-name[data-view="craft"] .material-options { height: auto; gap: 12px; }
+  body.is-name[data-view="craft"] .material-option { height: auto; min-height: 44px; }
+  body.is-name[data-view="craft"] .option-label { font-size: 14px; line-height: 22px; }
+  body.is-name[data-view="craft"] .material-group--carving .material-options { height: auto; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+  body.is-name[data-view="craft"] .material-group--carving .material-option { width: 100%; height: 68px; padding-bottom: 12px; }
+  body.is-name[data-view="craft"] .carve-sheet { width: 100%; max-width: 160px; height: 52px; font-size: 26px; letter-spacing: .12em; }
+  body.is-name[data-view="craft"] .craft-materials { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  body.is-name[data-view="craft"] .material-group--stone .material-options { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  body.is-name[data-view="craft"] .material-option--stone { gap: 10px; padding-bottom: 8px; }
+  body.is-name[data-view="craft"] .material-option--stone .stone-material { width: 48px; height: 88px; max-height: 88px; flex: none; }
+  body.is-name[data-view="craft"] .material-group--ink .material-options { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 20px; }
+  body.is-name[data-view="craft"] .material-option--ink { gap: 12px; padding: 8px 0; }
+  body.is-name[data-view="craft"] .ink-mark { width: 36px; height: 24px; }
+  body.is-name[data-view="craft"] .material-group--paper .material-options { grid-template-columns: repeat(3, minmax(0, 1fr)); max-height: none; gap: 16px 12px; }
+  body.is-name[data-view="craft"] .material-option--paper { min-height: 172px; }
+  body.is-name[data-view="craft"] .paper-name { height: 30px; }
+  body.is-name[data-view="craft"] .paper-visual { flex: none; width: 100%; max-width: 120px; height: 136px; max-height: none; margin-top: 6px; }
+  body.is-name[data-view="craft"] .craft-sliders { gap: 20px; }
+  body.is-name[data-view="craft"] .craft-sliders .material-group { height: auto; padding: 0; }
+  body.is-name[data-view="craft"] .craft-sliders legend { width: auto; height: auto; margin: 0 0 8px; }
+  body.is-name[data-view="craft"] .finish-range { min-height: 44px; height: auto; grid-template-columns: 36px minmax(0, 1fr) 42px 36px; gap: 8px; }
+  body.is-name[data-view="craft"] .range-end { min-height: 44px; font-size: 13px; }
+  body.is-name[data-view="craft"] .finish-range output { font-size: 14px; }
+  body.is-name[data-view="craft"] .finish-range input { height: 44px; }
+  body.is-name[data-view="craft"] .finish-range input::-webkit-slider-thumb { width: 20px; height: 20px; }
+  body.is-name[data-view="craft"] .finish-range input::-moz-range-thumb { width: 20px; height: 20px; }
+  body.is-name[data-view="craft"] .craft-preview {
+    grid-row: 1; width: min(100%, 280px); height: auto; margin: 0 auto; grid-template-rows: auto auto auto; gap: 14px; justify-self: center;
+  }
+  body.is-name[data-view="craft"] .craft-preview .craft-preview-title { font-size: 18px; line-height: 1.5; }
+  body.is-name[data-view="craft"] .poster-paper { width: 100%; height: auto; aspect-ratio: 5 / 7; }
+  body.is-name[data-view="craft"] #name-poster { width: 100%; height: auto; max-width: 100%; aspect-ratio: 5 / 7; }
+  body.is-name[data-view="craft"] .craft-preview figcaption { font-size: 12px; letter-spacing: .2em; }
+  body.is-name[data-view="craft"] .scene-actions {
+    width: 100%; max-width: 640px; min-height: 52px; margin: 8px auto 0; gap: 18px; flex-wrap: wrap;
+  }
+  body.is-name[data-view="craft"] .scene-actions button { min-height: 48px; height: auto; font-size: 14px; letter-spacing: 0; gap: 10px; }
+  body.is-name[data-view="craft"] .scene-actions .name-primary { flex: 1; width: auto; min-width: 150px; min-height: 52px; padding: 10px 16px; gap: 12px; font-size: 18px; }
+  body.is-name[data-view="craft"] .scene-actions svg,
+  body.is-name[data-view="craft"] .scene-actions .name-primary svg { width: 22px; height: 22px; }
+}

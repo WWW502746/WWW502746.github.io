@@ -103,6 +103,7 @@
 }
 
 .archive-catalog .archive-object figure::after { display: none; }
+.archive-catalog[data-motion-active="false"] .archive-object figure { animation-play-state: paused; }
 .archive-catalog .archive-object:nth-child(2) figure { animation-delay: -2.3s; }
 .archive-catalog .archive-object:nth-child(3) figure { animation-delay: -4.8s; animation-duration: 10s; }
 .archive-catalog .archive-object:nth-child(4) figure { animation-delay: -1.2s; }

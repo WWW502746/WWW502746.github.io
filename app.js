@@ -336,7 +336,7 @@ function observeReveals() {
   document.querySelectorAll(".page--active .reveal").forEach((element) => observer.observe(element));
 }
 
-if (matchMedia("(pointer: fine)").matches) {
+if (cursor && matchMedia("(pointer: fine)").matches && getComputedStyle(cursor).display !== "none") {
   window.addEventListener("pointermove", (event) => {
     cursor.style.left = `${event.clientX}px`;
     cursor.style.top = `${event.clientY}px`;

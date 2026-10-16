@@ -1,5 +1,6 @@
 (() => {
   const film = document.querySelector('.home-film');
+  if (!film || window.homeMobile) return;
   const home = film.closest('[data-page="home"]');
   const clips = [...film.querySelectorAll('.transition-film')].map(video => ({
     video, fps: Number(video.dataset.fps), frames: Number(video.dataset.frames),

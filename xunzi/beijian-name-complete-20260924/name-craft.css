@@ -1,0 +1,120 @@
+/* The approved desktop craft screen; other name steps retain their layout. */
+body.is-name[data-view="review"]::before {
+  background-image:linear-gradient(#0b0e102c,#0b0e102c),url('assets/name/craft-ui/review-hall-v2.png');
+}
+body.is-name[data-view="pick"]::before {
+  background-image:linear-gradient(rgba(6,9,9,.62),rgba(6,9,9,.68)),url('assets/name/scene/pick-table.png');
+}
+body.is-name[data-view="craft"] {
+  --u: min(.052083333vw,.092592593vh);
+  --name-text: #e7e3d8;
+  --name-red: #c55743;
+  background: #0b0e10;
+  overflow: hidden;
+}
+body.is-name[data-view="craft"]::before {
+  background-image:linear-gradient(#0b0e107d,#0b0e107d),url('assets/name/craft-ui/craft-table-v2.png');
+}
+body.is-name[data-view="craft"] .noise { display:none; }
+body.is-name[data-view="craft"] .site-header {
+  height:calc(72 * var(--u)); padding-inline:max(calc(96 * var(--u)),calc((100vw - 1728 * var(--u)) / 2));
+  display:flex; gap:0; background:#0b0e1030;
+}
+body.is-name[data-view="craft"] .site-header .brand { gap:calc(20 * var(--u)); align-items:center; }
+body.is-name[data-view="craft"] .site-header .brand span { font-size:clamp(24px,calc(34 * var(--u)),46px); letter-spacing:calc(4 * var(--u)); }
+body.is-name[data-view="craft"] .site-header .brand small { font:clamp(9px,calc(12 * var(--u)),16px)/1 Georgia,serif; letter-spacing:calc(4 * var(--u)); color:#c1c3b8; }
+body.is-name[data-view="craft"] .site-header nav { margin-left:auto; display:flex; gap:calc(48 * var(--u)); }
+body.is-name[data-view="craft"] .site-header nav button {
+  min-width:calc(62 * var(--u)); height:44px; font:clamp(14px,calc(19 * var(--u)),25px) SimSun,serif; letter-spacing:calc(3 * var(--u)); color:#e7e3d8;
+}
+body.is-name[data-view="craft"] .site-header nav button::after { left:50%; bottom:0; width:calc(25 * var(--u)); height:2px; transform:translateX(-50%) scaleX(0); }
+body.is-name[data-view="craft"] .site-header nav button.is-current::after { transform:translateX(-50%); background:#c55743; }
+body.is-name[data-view="craft"] .site-header .header-side,
+body.is-name[data-view="craft"] .site-header > .edition { display:none; }
+body.is-name[data-view="craft"] .name-page { min-height:0; height:100dvh; color:#e7e3d8; font-weight:400; }
+body.is-name[data-view="craft"] #name-app { height:100dvh; padding-top:calc(72 * var(--u)); display:grid; grid-template-rows:minmax(0,1fr) calc(48 * var(--u)); }
+body.is-name[data-view="craft"] .experiment-craft {
+  width:min(100%,calc(1920 * var(--u))); min-height:0; height:100%; margin:auto;
+  padding:calc(16 * var(--u)) calc(96 * var(--u)) calc(12 * var(--u));
+  display:grid; grid-template-columns:1fr; grid-template-rows:calc(70 * var(--u)) minmax(0,1fr) clamp(44px,calc(56 * var(--u)),76px); gap:calc(16 * var(--u));
+}
+body.is-name[data-view="craft"] .craft-heading { display:flex; align-items:center; gap:calc(34 * var(--u)); }
+body.is-name[data-view="craft"] .craft-heading h1 { margin:0; font:400 clamp(34px,calc(56 * var(--u)),78px)/1.2 SimSun,serif; letter-spacing:calc(5 * var(--u)); }
+body.is-name[data-view="craft"] .craft-heading p { margin:0; font-size:clamp(14px,calc(19 * var(--u)),26px); color:#afb3a9; letter-spacing:calc(4 * var(--u)); }
+body.is-name[data-view="craft"] .craft-workspace {
+  width:100%; height:min(100%,calc(774 * var(--u))); min-height:0; align-self:center;
+  display:grid; grid-template-columns:minmax(0,1.12fr) minmax(0,1fr); gap:calc(88 * var(--u));
+}
+body.is-name[data-view="craft"] .craft-controls { min-height:0; align-self:stretch; display:grid; grid-template-rows:calc(68 * var(--u)) calc(216 * var(--u)) minmax(0,1fr) calc(80 * var(--u)); gap:calc(20 * var(--u)); }
+body.is-name[data-view="craft"] .material-group { display:block; height:100%; min-height:0; min-width:0; margin:0; padding:0; border:0; }
+body.is-name[data-view="craft"] .material-group legend {
+  float:left; width:100%; padding:0; margin:0 0 calc(8 * var(--u)); color:#d8d6cb;
+  font:400 clamp(20px,calc(26 * var(--u)),36px)/clamp(26px,calc(36 * var(--u)),48px) 'Microsoft YaHei',sans-serif; letter-spacing:calc(3 * var(--u));
+}
+body.is-name[data-view="craft"] .material-options { clear:both; height:calc(100% - clamp(26px,36 * var(--u),48px) - 8 * var(--u)); gap:calc(16 * var(--u)); }
+body.is-name[data-view="craft"] .material-option { height:100%; min-height:0; min-width:0; padding:0; color:#e7e3d8; }
+body.is-name[data-view="craft"] .material-option::after { display:none; }
+body.is-name[data-view="craft"] .option-label { flex-shrink:0; position:relative; font:clamp(14px,calc(16 * var(--u)),23px)/clamp(20px,calc(24 * var(--u)),34px) 'Microsoft YaHei',sans-serif; white-space:nowrap; }
+body.is-name[data-view="craft"] .material-option[aria-pressed="true"] .option-label::after,
+body.is-name[data-view="craft"] .material-option--carving[aria-pressed="true"]::after {
+  content:''; display:block; position:absolute; height:2px; width:calc(22 * var(--u)); left:50%; bottom:calc(-7 * var(--u)); transform:translateX(-50%); background:#c55743;
+}
+body.is-name[data-view="craft"] .material-group--carving { padding-left:calc(108 * var(--u)); }
+body.is-name[data-view="craft"] .material-group--carving legend { width:calc(84 * var(--u)); height:100%; margin:0 0 0 calc(-108 * var(--u)); display:flex; align-items:center; }
+body.is-name[data-view="craft"] .material-group--carving .material-options { clear:none; height:100%; display:flex; gap:calc(28 * var(--u)); }
+body.is-name[data-view="craft"] .material-group--carving .material-option { position:relative; width:calc(152 * var(--u)); height:calc(68 * var(--u)); min-height:0; padding:0 0 calc(12 * var(--u)); border:0; background:none; box-shadow:none; }
+body.is-name[data-view="craft"] .material-option--carving[aria-pressed="true"]::after { bottom:0; }
+body.is-name[data-view="craft"] .carve-sheet {
+  display:flex; align-items:center; justify-content:center; width:calc(136 * var(--u)); height:calc(52 * var(--u)); margin:auto;
+  font:clamp(22px,calc(32 * var(--u)),44px) BeilinKai,KaiTi,SimSun,serif; letter-spacing:calc(6 * var(--u)); color:#141717;
+  background:#e5decf url('assets/name/craft-ui/paper-raw.webp') center/cover;
+  clip-path:polygon(1% 5%,17% 2%,32% 7%,49% 2%,67% 5%,85% 2%,99% 7%,98% 50%,99% 94%,84% 98%,65% 94%,47% 98%,29% 96%,12% 98%,1% 91%,2% 48%);
+}
+body.is-name[data-view="craft"] .carve-sheet--yin { color:#e5decf; background-image:linear-gradient(#141717f2,#141717f2),url('assets/name/craft-ui/paper-raw.webp'); }
+body.is-name[data-view="craft"] .craft-materials { min-height:0; display:grid; grid-template-columns:minmax(0,1.45fr) minmax(0,1fr); gap:calc(44 * var(--u)); }
+body.is-name[data-view="craft"] .material-option--stone { display:flex; flex-direction:column; align-items:center; gap:calc(8 * var(--u)); padding-bottom:calc(8 * var(--u)); }
+body.is-name[data-view="craft"] .material-option--stone .stone-material { flex:1; min-height:0; max-height:calc(132 * var(--u)); height:auto; width:calc(48 * var(--u)); max-width:none; border:0; border-radius:0; object-fit:contain; filter:drop-shadow(3px 5px 4px #0005); transition:transform .3s; }
+body.is-name[data-view="craft"] .material-option--stone:hover .stone-material { filter:drop-shadow(3px 5px 4px #0005); transform:translateY(calc(-3 * var(--u))); }
+body.is-name[data-view="craft"] .material-group--ink .material-options { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:calc(8 * var(--u)) calc(20 * var(--u)); }
+body.is-name[data-view="craft"] .material-option--ink { display:flex; flex-direction:row; align-items:center; justify-content:start; gap:calc(13 * var(--u)); padding-bottom:calc(6 * var(--u)); }
+body.is-name[data-view="craft"] .ink-mark { width:calc(42 * var(--u)); height:calc(24 * var(--u)); flex:0 0 auto; }
+body.is-name[data-view="craft"] .material-group--paper .material-options { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); max-height:calc(300 * var(--u)); gap:calc(16 * var(--u)); }
+body.is-name[data-view="craft"] .material-option--paper { display:flex; flex-direction:column; align-items:center; gap:0; }
+body.is-name[data-view="craft"] .paper-name { width:100%; height:clamp(20px,calc(28 * var(--u)),38px); display:flex; align-items:flex-start; justify-content:center; }
+body.is-name[data-view="craft"] .material-option--paper[aria-pressed="true"] .paper-name::after { bottom:calc(2 * var(--u)); }
+body.is-name[data-view="craft"] .paper-visual { position:relative; display:block; flex:1; min-height:0; max-height:calc(264 * var(--u)); width:calc(120 * var(--u)); max-width:100%; margin-top:calc(8 * var(--u)); }
+body.is-name[data-view="craft"] .material-option--paper .paper-render { position:absolute; top:0; left:0; width:100%; height:100%; max-width:none; object-fit:contain; object-position:center top; border:0; border-radius:0; clip-path:none; filter:drop-shadow(0 4px 5px #0004); }
+body.is-name[data-view="craft"] .paper-open { display:none; }
+body.is-name[data-view="craft"] .material-option--paper:is(:hover,:focus) .paper-closed { display:none; }
+body.is-name[data-view="craft"] .material-option--paper:is(:hover,:focus) .paper-open { display:block; }
+body.is-name[data-view="craft"] .craft-sliders { min-height:0; display:flex; flex-direction:column; justify-content:space-between; }
+body.is-name[data-view="craft"] .craft-sliders .material-group { height:calc(38 * var(--u)); padding-left:calc(98 * var(--u)); }
+body.is-name[data-view="craft"] .craft-sliders legend { width:calc(84 * var(--u)); height:100%; margin:0 0 0 calc(-98 * var(--u)); display:flex; align-items:center; }
+body.is-name[data-view="craft"] .finish-range { height:100%; display:grid; grid-template-columns:calc(44 * var(--u)) minmax(0,1fr) calc(48 * var(--u)) calc(44 * var(--u)); gap:calc(14 * var(--u)); align-items:center; }
+body.is-name[data-view="craft"] .range-end { height:100%; min-height:0; display:flex; align-items:center; font:clamp(14px,calc(16 * var(--u)),22px)/1.5 'Microsoft YaHei',sans-serif; white-space:nowrap; color:#afb3a9; }
+body.is-name[data-view="craft"] .range-end[aria-pressed="true"] { color:#e7e3d8; }
+body.is-name[data-view="craft"] .finish-range output { font:clamp(14px,calc(18 * var(--u)),24px)/1.5 'Microsoft YaHei',sans-serif; color:#e7e3d8; font-variant-numeric:tabular-nums; text-align:center; }
+body.is-name[data-view="craft"] .finish-range input { appearance:none; width:100%; height:clamp(24px,calc(32 * var(--u)),44px); margin:0; padding:0; background:linear-gradient(to right,#c55743 var(--value),#778074 var(--value)) center/100% 2px no-repeat; border:0; border-radius:0; cursor:pointer; }
+body.is-name[data-view="craft"] .finish-range input::-webkit-slider-thumb { appearance:none; width:clamp(10px,calc(12 * var(--u)),16px); height:clamp(10px,calc(12 * var(--u)),16px); border:0; border-radius:50%; background:#e5decf; box-shadow:none; }
+body.is-name[data-view="craft"] .finish-range input::-moz-range-thumb { width:clamp(10px,calc(12 * var(--u)),16px); height:clamp(10px,calc(12 * var(--u)),16px); border:0; border-radius:50%; background:#e5decf; }
+body.is-name[data-view="craft"] .craft-preview { min-height:0; width:100%; max-width:none; margin:0; place-self:stretch; display:grid; grid-template-rows:clamp(26px,calc(36 * var(--u)),48px) minmax(0,1fr) calc(24 * var(--u)); gap:calc(16 * var(--u)); justify-items:center; }
+body.is-name[data-view="craft"] .craft-preview .craft-preview-title { display:block; margin:0; color:#d8d6cb; font:clamp(20px,calc(26 * var(--u)),36px)/clamp(26px,calc(36 * var(--u)),48px) 'Microsoft YaHei',sans-serif; letter-spacing:calc(3 * var(--u)); }
+body.is-name[data-view="craft"] .poster-paper { width:100%; height:100%; min-height:0; display:flex; align-items:center; justify-content:center; filter:drop-shadow(0 10px 16px #0006); }
+body.is-name[data-view="craft"] #name-poster { height:100%; width:auto; max-width:95%; object-fit:contain; aspect-ratio:5/7; box-shadow:none; clip-path:polygon(.5% .2%,22% 0,42% .4%,63% 0,82% .4%,99.8% .2%,99.5% 24%,100% 48%,99.5% 74%,99.8% 99.6%,76% 100%,52% 99.6%,30% 100%,.2% 99.8%,.5% 72%,0 49%,.5% 24%); }
+body.is-name[data-view="craft"] .craft-preview figcaption { margin:0; font:clamp(12px,calc(15 * var(--u)),20px)/1.4 SimSun,serif; letter-spacing:calc(4 * var(--u)); color:#afb3a9; }
+body.is-name[data-view="craft"] .scene-actions { grid-column:1; min-height:0; margin:0; gap:20px; }
+body.is-name[data-view="craft"] .scene-actions button { height:clamp(44px,calc(54 * var(--u)),72px); min-height:44px; gap:calc(16 * var(--u)); font:clamp(14px,calc(18 * var(--u)),25px) SimSun,serif; letter-spacing:calc(3 * var(--u)); }
+body.is-name[data-view="craft"] .scene-actions svg { width:calc(24 * var(--u)); height:calc(24 * var(--u)); }
+body.is-name[data-view="craft"] .scene-actions .name-primary { width:calc(240 * var(--u)); min-width:0; min-height:44px; padding:0; border:0; gap:calc(28 * var(--u)); font-size:clamp(18px,calc(22 * var(--u)),30px); font-weight:400; background:#e5decf; color:#141717; box-shadow:none; }
+body.is-name[data-view="craft"] .scene-actions .name-primary svg { width:calc(26 * var(--u)); height:calc(26 * var(--u)); }
+body.is-name[data-view="craft"] .name-footer { width:min(100%,calc(1920 * var(--u))); min-height:0; height:100%; margin:auto; padding:0 calc(96 * var(--u)); gap:0; border:0; color:#afb3a9; background:#0b0e1028; font:clamp(12px,calc(15 * var(--u)),20px)/1.5 'Microsoft YaHei',sans-serif; }
+body.is-name[data-view="craft"] .name-footer ol { gap:calc(24 * var(--u)); }
+body.is-name[data-view="craft"] .name-footer li { width:calc(94 * var(--u)); padding:0 0 calc(10 * var(--u)); text-align:center; font:clamp(12px,calc(16 * var(--u)),22px)/1.5 SimSun,serif; letter-spacing:calc(2 * var(--u)); }
+body.is-name[data-view="craft"] .name-footer li span { margin-right:calc(10 * var(--u)); }
+body.is-name[data-view="craft"] .name-footer li[aria-current] { color:#e7e3d8; }
+body.is-name[data-view="craft"] .name-footer li[aria-current]::after { left:50%; bottom:0; width:calc(22 * var(--u)); height:2px; transform:translateX(-50%); background:#c55743; }
+body.is-name[data-view="craft"] .name-footer > span { font-size:inherit; }
+body.is-name[data-view="craft"] .name-footer > span:last-child { font:clamp(9px,calc(11 * var(--u)),15px) Georgia,serif; letter-spacing:calc(2 * var(--u)); color:#858b82; }
+@media (prefers-reduced-motion:reduce) {
+  body.is-name[data-view="craft"] .material-option--stone:hover .stone-material { transform:none; }
+}

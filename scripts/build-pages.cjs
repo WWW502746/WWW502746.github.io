@@ -7,7 +7,8 @@ const source = path.resolve(__dirname, '..');
 const output = process.argv[2] ? path.resolve(process.argv[2]) : path.join(source, '_stage_pages');
 assert(!fs.existsSync(output), 'Choose a new output directory; build-pages does not delete existing files.');
 const manifest = JSON.parse(fs.readFileSync(path.join(source, 'assets/landing-v5/stream/stream-manifest.json'), 'utf8'));
-const streamedStone = /data-stream-manifest="assets\/landing-v5\/mse\/stone\/manifest\.json(?:\?[^\"]*)?"/.test(fs.readFileSync(path.join(source, 'index.html'), 'utf8'));
+const sourceHtml = fs.readFileSync(path.join(source, 'index.html'), 'utf8');
+const streamedStone = /data-stream-manifest="assets\/landing-v5\/mse\/stone\/manifest\.json(?:\?[^\"]*)?"/.test(sourceHtml);
 const originalStream = streamedStone ? JSON.parse(fs.readFileSync(path.join(source, 'assets/landing-v5/mse/stone/manifest.json'), 'utf8')) : null;
 assert.equal(manifest.version, 1);
 assert(Array.isArray(manifest.videos) && manifest.videos.length > 0);
@@ -16,6 +17,7 @@ for (const video of manifest.videos) {
   assert(Array.isArray(video.orderedParts) && video.orderedParts.length > 0);
   for (const part of video.orderedParts) assert(/^assets\/landing-v5\/stream\/[\w.-]+\.bin$/.test(part.path), 'Invalid video part path.');
 }
+const referencedVideos = manifest.videos.filter(video => sourceHtml.includes(`data-src="${video.original}"`));
 const excluded = new Set([
   '.git', '.github', 'scripts', '_stage_pages', 'assets/landing-v5/stream',
   ...(streamedStone ? ['assets/landing-v5/mse/stone'] : []),
@@ -69,7 +71,7 @@ if (streamedStone) {
 
 const buffer = Buffer.alloc(4 * 1024 * 1024);
 const videos = [];
-for (const video of manifest.videos) {
+for (const video of referencedVideos) {
   if (streamedStone && video.id === 'stone') continue;
   const destination = path.join(output, video.original);
   fs.mkdirSync(path.dirname(destination), { recursive: true });
@@ -113,7 +115,7 @@ assert(bytes < 1_000_000_000, 'Pages artifact exceeds 1 GB.');
 const indexFile = path.join(output, 'index.html');
 const html = fs.readFileSync(indexFile, 'utf8');
 let hostedHtml = html;
-for (const video of manifest.videos) {
+for (const video of referencedVideos) {
   if (streamedStone && video.id === 'stone') continue;
   const releaseUrl = `https://github.com/WWW502746/WWW502746.github.io/releases/download/v5-media-20261012/${path.posix.basename(video.original)}`;
   hostedHtml = hostedHtml.replace(`data-hosted-src="${releaseUrl}"`, `data-hosted-src="${video.original}"`);

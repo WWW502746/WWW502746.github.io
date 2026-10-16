@@ -4,20 +4,36 @@ The public experience is a typographic interpretation, not a historical rubbing 
 
 ## Fonts
 
-Four fonts from the Google Fonts repository are redistributed under the supplied, unmodified SIL Open Font License 1.1 texts:
+Five fonts from the Google Fonts repository are redistributed under the supplied, unmodified SIL Open Font License 1.1 texts:
 
 - https://github.com/google/fonts/tree/main/ofl/zcoolxiaowei
 - https://github.com/google/fonts/tree/main/ofl/mashanzheng
 - https://github.com/google/fonts/tree/main/ofl/longcang
 - https://github.com/google/fonts/tree/main/ofl/zhimangxing
+- https://github.com/google/fonts/tree/main/ofl/liujianmaocao
 
-The WOFF2 files are lossless web-format conversions of the original TTFs, without glyph changes or subsetting. `coverage.json` is generated from their actual cmap tables, so missing glyphs are reported instead of silently showing a fallback glyph. `scripts/build-name-fonts.py` uses fontTools and Brotli to reproduce these files from the upstream TTFs in `fonts/`.
+The sixth V4 option is Fandol Kai from https://ctan.org/tex-archive/fonts/fandol under GPL + Font Exception. Its original OTF, full license and upstream README are supplied in `fonts/`.
+
+The WOFF2 files are web-format conversions of the original fonts, without glyph changes or subsetting. V4 `coverage.json` is generated from all six actual cmap tables, so missing glyphs are reported instead of silently showing a fallback glyph. `scripts/build-name-fonts.py` uses fontTools and Brotli to reproduce coverage and WOFF2 files from the supplied TTF/OTF originals.
 
 ## Profiles And Rendering
 
-`profiles.json` contains the existing prototype's 24 aesthetic profiles and normalized visual axes, extracted with `scripts/migrate-name-profiles.cjs`. Historical source tables were intentionally not migrated. Profiles describe selected visual qualities, not a validated psychological assessment.
+`profiles.json` contains the four families and 16 personality narratives supplied for this experience. Every chosen glyph votes for a family: 方正 → 刻石思者, 疏朗 → 镌心者, 浑厚 → 守石者, 流动 → 观石者. The most common style wins; a tie goes to whichever tied style was chosen first. The seven visual axes in the expandable writing spectrum average all chosen glyphs.
 
-The same font-rendered, texture-masked glyph canvas is used in the candidate preview and the downloadable PNG. The existing generated `assets/surface-02.png` provides the stone grain. Names and selections remain in browser session storage; they are not sent to a server or added to URLs. Exports contain an interpretation label and a deterministic composition identifier, not a promised globally unique archival record.
+The six finishing choices vote for one of the four readings within that family. Stone and ink count two votes each; paper, rubbing pressure, carving, and weathering count one each. Ties use the stone reading, then the ink reading, then the first reading in order. The exact table is:
+
+| Choice | Reading 1 | Reading 2 | Reading 3 | Reading 4 |
+| --- | --- | --- | --- | --- |
+| Stone (2 votes) | 青石 | 汉白玉 | 花岗岩 | 砂岩 |
+| Ink (2 votes) | 松烟乌金 | 石墨淡墨 | 朱砂矿物 | 赭石古墨 |
+| Paper (1 vote) | 生宣纸、仿古籍宣纸 | 棉麻手工纸、蝉翼宣纸 | — | 粗麻纸、裂纹宣纸 |
+| Pressure (1 vote) | — | 轻拓 | 重拓 | — |
+| Carving (1 vote) | 阴刻 | — | 阳刻 | — |
+| Weathering (1 vote) | — | — | — | 残碑风化开启 |
+
+Thus each of the 16 profiles is reachable with a single character that is covered by all four fonts. The rubbing preview omits the result name until the visitor completes the rubbing; the final poster includes it. These are artistic readings, not a validated psychological assessment.
+
+The same font-rendered glyph is used in the selected style and downloadable PNG. `assets/surface-02.png` gives the candidate glyphs stone grain; `assets/name/materials/` supplies the stone and paper textures for the rubbing. Names and selections remain in browser session storage; they are not sent to a server or added to URLs. Final exports contain an interpretation label and a deterministic composition identifier, not a promised globally unique archival record.
 
 ## Entry Image
 
@@ -25,4 +41,4 @@ The same font-rendered, texture-masked glyph canvas is used in the candidate pre
 
 ## Distribution
 
-The deployment copies only `entry-stone.png`, `coverage.json`, `profiles.json`, WOFF2 fonts, and their OFL files. Original TTFs, design screenshots, private scripts, and prototype source data are not public assets.
+The V4 deployment includes `entry-stone.png`, `coverage.json`, `profiles.json`, stone and paper materials, six WOFF2 fonts, their licenses, and the original Fandol OTF. `scene/` contains the approved generated paper/stone backgrounds and three transparent stone silhouettes; live glyphs and controls are rendered separately. The confirmation stones are displayed in neutral grey, without a hover light sweep. Raised carving weathering adds deterministic edge chips and fissures shared by preview and export. Design screenshots and private scripts are excluded from the release.

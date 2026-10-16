@@ -4,14 +4,17 @@ The public experience is a typographic interpretation, not a historical rubbing 
 
 ## Fonts
 
-Four fonts from the Google Fonts repository are redistributed under the supplied, unmodified SIL Open Font License 1.1 texts:
+Five fonts from the Google Fonts repository are redistributed under the supplied, unmodified SIL Open Font License 1.1 texts:
 
 - https://github.com/google/fonts/tree/main/ofl/zcoolxiaowei
 - https://github.com/google/fonts/tree/main/ofl/mashanzheng
 - https://github.com/google/fonts/tree/main/ofl/longcang
 - https://github.com/google/fonts/tree/main/ofl/zhimangxing
+- https://github.com/google/fonts/tree/main/ofl/liujianmaocao
 
-The WOFF2 files are lossless web-format conversions of the original TTFs, without glyph changes or subsetting. `coverage.json` is generated from their actual cmap tables, so missing glyphs are reported instead of silently showing a fallback glyph. `scripts/build-name-fonts.py` uses fontTools and Brotli to reproduce these files from the upstream TTFs in `fonts/`.
+The sixth V4 option is Fandol Kai from https://ctan.org/tex-archive/fonts/fandol under GPL + Font Exception. Its original OTF, full license and upstream README are supplied in `fonts/`.
+
+The WOFF2 files are web-format conversions of the original fonts, without glyph changes or subsetting. V4 `coverage.json` is generated from all six actual cmap tables, so missing glyphs are reported instead of silently showing a fallback glyph. `scripts/build-name-fonts.py` uses fontTools and Brotli to reproduce coverage and WOFF2 files from the supplied TTF/OTF originals.
 
 ## Profiles And Rendering
 
@@ -38,4 +41,4 @@ The same font-rendered glyph is used in the selected style and downloadable PNG.
 
 ## Distribution
 
-The deployment copies `entry-stone.png`, `coverage.json`, `profiles.json`, the compressed stone and paper materials, WOFF2 fonts, and their OFL files. Original TTFs, design screenshots, private scripts, and prototype source data are not public assets.
+The V4 deployment includes `entry-stone.png`, `coverage.json`, `profiles.json`, stone and paper materials, six WOFF2 fonts, their licenses, and the original Fandol OTF. `scene/` contains the approved generated paper/stone backgrounds and three transparent stone silhouettes; live glyphs and controls are rendered separately. The confirmation stones are displayed in neutral grey, without a hover light sweep. Raised carving weathering adds deterministic edge chips and fissures shared by preview and export. Design screenshots and private scripts are excluded from the release.
