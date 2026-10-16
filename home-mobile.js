@@ -116,8 +116,8 @@
   film.addEventListener('touchcancel', () => { touch = null; }, {passive: true});
   document.querySelector('.clean-toggle').onclick = event => { const clean = document.body.classList.toggle('is-film-clean'); event.currentTarget.setAttribute('aria-pressed', String(clean)); };
   function syncOrientation() {
-    const type = screen.orientation?.type;
-    const landscape = type ? type.startsWith('landscape') : typeof window.orientation === 'number' ? Math.abs(window.orientation) % 180 === 90 : innerWidth > innerHeight;
+    // Embedded browsers can keep reporting portrait after their viewport has rotated.
+    const landscape = innerWidth > innerHeight;
     document.body.classList.toggle('is-mobile-portrait', !landscape);
     gate.setAttribute('aria-hidden', String(landscape));
     document.querySelector('main').inert = !landscape; document.querySelector('.site-header').inert = !landscape;
@@ -127,16 +127,18 @@
     if (playing) { if (!landscape) { playing.video.pause(); resume.hidden = false; } else playVideo(); }
     window.dispatchEvent(new CustomEvent('site:orientation', {detail: {landscape}}));
   }
+  const syncViewport = () => { if (!document.activeElement?.matches('input,textarea')) syncOrientation(); };
   screen.orientation?.addEventListener('change', syncOrientation);
   window.addEventListener('orientationchange', syncOrientation);
-  window.addEventListener('resize', () => { if (!document.activeElement?.matches('input,textarea')) syncOrientation(); });
+  window.addEventListener('resize', syncViewport);
+  window.addEventListener('pageshow', syncViewport);
   window.homeFilm = {goTo, get index() { return index; }, get progress() { return index / 2; }, get atEnd() { return active() && index === 2 && !playing; }, get busy() { return Boolean(playing); }};
   window.addEventListener('site:page', event => {
     if (playing) { destination = null; finish(); }
     touch = null; document.body.classList.toggle('mobile-home-active', event.detail.route === 'home');
     if (event.detail.route === 'home') { finish(event.detail.homeSection ?? index); window.scrollTo(0, 0); }
   });
-  document.addEventListener('visibilitychange', () => { if (document.hidden) { if (playing) playing.video.pause(); } else if (playing) resume.hidden = false; });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) { if (playing) playing.video.pause(); } else { syncViewport(); if (playing) resume.hidden = false; } });
   reduced.addEventListener('change', () => { destination = null; finish(); });
   document.body.classList.toggle('mobile-home-active', active());
   normalize(); syncOrientation();
