@@ -442,7 +442,8 @@ window.prepareExhibition = async () => {
     await new Promise((resolve, reject) => {
       function check() {
         const document = glyphFieldFrame.contentDocument;
-        if (document?.querySelector('.dragon-field__fallback')) { resolve(); return; }
+        const fallback = document?.querySelector('.dragon-field__fallback');
+        if (fallback?.getClientRects().length && !fallback.closest('canvas')) { resolve(); return; }
         const canvas = document?.querySelector('.dragon-field canvas');
         const gl = canvas?.getContext('webgl2') || canvas?.getContext('webgl');
         if (gl && gl.getParameter(gl.CURRENT_PROGRAM)) { resolve(); return; }
