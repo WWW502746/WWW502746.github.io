@@ -17,13 +17,15 @@
   const hostedMedia = location.hostname === 'www502746.github.io';
   const playhead = { progress: 0 };
   let trigger, active = false, resizeProgress = null, endSince = null;
+  let prepared = !window.sitePreload?.required;
+  let warming = false;
   const ramp = (value, start, end) => Math.max(0, Math.min(1, (value - start) / (end - start)));
 
   // Keep one seek per clip in flight; decoding follows the latest scroll position.
   function seekLatest(clip) {
     clip.stream?.ensure(clip.desiredTime);
     if (clip.framePlayer && !clip.framePlayer.failed) {
-      if (!active || playhead.progress >= .5 || document.hidden) { clip.framePlayer.suspend(); return; }
+      if (!warming && (!active || playhead.progress >= .5 || document.hidden)) { clip.framePlayer.suspend(); return; }
       clip.framePlayer.resume();
       if (clip.framePlayer.ready) { clip.stream.useFrames?.(true); return; }
       clip.stream.useFrames?.(false);
@@ -69,7 +71,7 @@
     if (status.textContent !== message) status.textContent = message;
   }
   function prepareClip(clip) {
-    if (clip.started) return;
+    if (clip.started || !prepared) return;
     clip.started = true;
     const source = hostedMedia ? clip.video.dataset.hostedSrc : clip.video.dataset.src;
     clip.video.preload = 'auto';
@@ -77,10 +79,10 @@
       ? window.createScrollMedia?.(clip.video, clip.video.dataset.streamManifest, source) : null;
     if (!clip.stream) { clip.video.src = source; clip.video.load(); }
     if (clip === clips[0] && clip.stream && window.createScrollFrames) {
-      window.createScrollFrames(clip.video, clip.stream, {
+      clip.frameTask = window.createScrollFrames(clip.video, clip.stream, {
         getFrame: () => Math.floor(clip.desiredTime * clip.fps),
         onReady(player) {
-          if (!active || playhead.progress >= .5 || document.hidden) { player.suspend(); return; }
+          if (!warming && (!active || playhead.progress >= .5 || document.hidden)) { player.suspend(); return; }
           clip.ready = true; clip.stream.useFrames?.(true); render();
         },
         onFallback() {
@@ -90,7 +92,7 @@
       }).then(player => {
         if (!player || player.failed) return;
         clip.framePlayer = player;
-        if (!active || playhead.progress >= .5 || document.hidden) player.suspend();
+        if (!warming && (!active || playhead.progress >= .5 || document.hidden)) player.suspend();
         render();
       });
     }
@@ -102,6 +104,27 @@
   }
   window.homeFilm = {
     goTo,
+    async prepare() {
+      prepared = true;
+      warming = true;
+      clips.forEach(prepareClip);
+      render();
+      const started = performance.now();
+      let frameDeadline;
+      try {
+        await Promise.race([clips[0].frameTask, new Promise((_, reject) => {
+          frameDeadline = setTimeout(() => reject(new Error('影片准备时间较长，请重试。')), 45000);
+        })]);
+        await new Promise((resolve, reject) => {
+        const check = () => {
+          if (clips.some(clip => clip.failed)) { reject(new Error('影片尚未准备完成，请重试。')); return; }
+          if (clips.every(clip => clip.ready) && (!clips[0].framePlayer || clips[0].framePlayer.ready || clips[0].framePlayer.failed)) { resolve(); return; }
+          if (performance.now() - started > 45000) { reject(new Error('影片准备时间较长，请重试。')); return; }
+          setTimeout(check, 100);
+        };
+        check();
+      }); } finally { clearTimeout(frameDeadline); warming = false; render(); }
+    },
     get index() { return trigger ? Number(home.dataset.module) || 0 : Math.min(2, Math.round(scrollY / innerHeight)); },
     get progress() { return playhead.progress; },
     get atEnd() {
@@ -138,19 +161,19 @@
       }
     }).scrollTrigger;
     trigger.disable(false);
-    clips.forEach(clip => {
-      ['loadeddata', 'canplay'].forEach(event => clip.video.addEventListener(event, () => { clip.ready = true; render(); }));
-      clip.video.addEventListener('seeked', () => {
-        if (clip.video.readyState >= 2) clip.ready = true;
-        render();
-      });
-      clip.video.addEventListener('error', () => { clip.failed = true; render(); });
-    });
     window.addEventListener('resize', () => {
       if (active && resizeProgress === null) resizeProgress = trigger.progress;
     });
     render();
   }
+  clips.forEach(clip => {
+    ['loadeddata', 'canplay'].forEach(event => clip.video.addEventListener(event, () => { clip.ready = true; render(); }));
+    clip.video.addEventListener('seeked', () => {
+      if (clip.video.readyState >= 2) clip.ready = true;
+      render();
+    });
+    clip.video.addEventListener('error', () => { clip.failed = true; render(); });
+  });
   function enter(route, index = null) {
     active = route === 'home';
     if (!active) clips.forEach(clip => clip.framePlayer?.suspend());

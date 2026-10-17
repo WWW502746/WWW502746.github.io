@@ -399,6 +399,7 @@ function openAddress() {
   } else showPage(route.startsWith('work-') ? 'works' : ["home", "works", "name-gateway", "name"].includes(route) ? route : "home", true);
 }
 
+if (!window.sitePreload?.required) {
 const bootStarted = performance.now();
 let bootFinished = false;
 const bootLimit = setTimeout(finishBoot, 4000);
@@ -421,6 +422,37 @@ window.addEventListener('site:page', event => {
   else if (image.complete) finishBoot();
   else ['load', 'error'].forEach(name => image.addEventListener(name, finishBoot, { once: true }));
 }, { once: true });
+}
+window.prepareExhibition = async () => {
+  loadWorksImages();
+  const images = [...document.querySelectorAll('.archive-object img')];
+  await Promise.all(images.map(image => image.decode().catch(() => { throw new Error('作品图片尚未准备完成，请重试。'); })));
+  if (glyphFieldFrame?.isConnected && !mobileExhibition && !glyphFieldFrame.dataset.loaded) {
+    const ready = new Promise((resolve, reject) => {
+      const timer = setTimeout(() => reject(new Error('展品互动尚未准备完成，请重试。')), 45000);
+      glyphFieldFrame.addEventListener('load', () => { clearTimeout(timer); resolve(); }, {once: true});
+      glyphFieldFrame.addEventListener('error', () => { clearTimeout(timer); reject(new Error('展品互动尚未准备完成，请重试。')); }, {once: true});
+    });
+    glyphFieldFrame.dataset.loaded = 'true';
+    glyphFieldFrame.src = '/lab/glyph-field/';
+    await ready;
+  }
+  if (glyphFieldFrame?.isConnected && !mobileExhibition) {
+    const started = performance.now();
+    await new Promise((resolve, reject) => {
+      function check() {
+        const document = glyphFieldFrame.contentDocument;
+        if (document?.querySelector('.dragon-field__fallback')) { resolve(); return; }
+        const canvas = document?.querySelector('.dragon-field canvas');
+        const gl = canvas?.getContext('webgl2') || canvas?.getContext('webgl');
+        if (gl && gl.getParameter(gl.CURRENT_PROGRAM)) { resolve(); return; }
+        if (performance.now() - started > 45000) { reject(new Error('立体展品尚未准备完成，请重试。')); return; }
+        setTimeout(check, 100);
+      }
+      check();
+    });
+  }
+};
 function startOpening() {
   openAddress();
   observeReveals();

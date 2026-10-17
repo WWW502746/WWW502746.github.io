@@ -31,6 +31,8 @@
     <link rel="stylesheet" href="name-result.css?v=v6result20261015">
     <link rel="stylesheet" href="mobile.css?v=landscape20261016">
   <link rel="stylesheet" href="mobile-layout.css?v=landscape20261016">
+<script>if(matchMedia('(min-width:801px) and (pointer:fine)').matches)document.documentElement.classList.add('is-preparing');</script>
+<link rel="stylesheet" href="preload.css?v=hdpreload20261017">
 </head>
   <body>
     <div class="boot" aria-hidden="true">
@@ -79,8 +81,8 @@
       <section class="page page--active" data-page="home">
         <div class="home-film">
     <div class="stage">
-      <video class="transition-film" id="home-transition" data-stream-manifest="assets/landing-online-20261017/stone/manifest.json" data-src="assets/landing-online-20261017/stone-1080p60.mp4" data-hosted-src="assets/landing-online-20261017/stone-1080p60.mp4" data-fps="60" data-frames="716" data-last-frame="11.925" preload="none" muted playsinline aria-hidden="true"></video>
-      <video class="transition-film" id="home-transition-23" data-stream-manifest="assets/landing-online-20261017/hall/manifest.json" data-src="assets/landing-online-20261017/hall-1080p24.mp4" data-hosted-src="assets/landing-online-20261017/hall-1080p24.mp4" data-fps="24" data-frames="169" data-last-frame="7.0208333333" preload="none" muted playsinline aria-hidden="true"></video>
+      <video class="transition-film" id="home-transition" data-stream-manifest="assets/landing-hd-20261017/stone/manifest.json" data-src="assets/landing-hd-20261017/stone-4k15.mp4" data-hosted-src="assets/landing-hd-20261017/stone-4k15.mp4" data-fps="15" data-frames="180" data-last-frame="11.9666666667" preload="none" muted playsinline aria-hidden="true"></video>
+      <video class="transition-film" id="home-transition-23" data-stream-manifest="assets/landing-hd-20261017/hall/manifest.json" data-src="assets/landing-hd-20261017/hall-1440p12.mp4" data-hosted-src="assets/landing-hd-20261017/hall-1440p12.mp4" data-fps="12" data-frames="85" data-last-frame="7.0416666667" preload="none" muted playsinline aria-hidden="true"></video>
       <section class="scene screen scene--stone" id="stone" aria-labelledby="stone-title">
         <img class="still backdrop still--stone" src="assets/landing-v5/stone.jpg" width="1678" height="937" alt="黑色石碑在侧光中显露刻字与斑驳的石面" fetchpriority="high">
         <div class="copy copy--stone home-copy">
@@ -413,14 +415,15 @@
     </section>
 
     <script src="lettering.js?v=beijian1"></script>
-    <script src="app.js?v=online20261017"></script>
+    <script src="preload.js?v=hdpreload20261017"></script>
+    <script src="app.js?v=hdpreload20261017"></script>
     <script src="vendor/gsap/gsap.min.js"></script>
     <script src="vendor/gsap/ScrollTrigger.min.js"></script>
     <script src="experience.js?v=landscape20261016"></script>
-    <script src="home-media.js?v=online20261017"></script>
-    <script src="home-frames.js?v=online20261017"></script>
+    <script src="home-media.js?v=hdpreload20261017"></script>
+    <script src="home-frames.js?v=hdpreload20261017"></script>
     <script src="home-mobile.js?v=orientationfix20261016"></script>
-    <script src="home-film.js?v=online20261017"></script>
+    <script src="home-film.js?v=hdpreload20261017"></script>
     <script src="archive-room.js?v=landscape20261016"></script>
     <script src="vendor/lucide.min.js"></script>
     <script type="module" src="stele-viewer.js?v=public1"></script>

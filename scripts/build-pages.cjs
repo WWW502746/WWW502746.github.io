@@ -8,6 +8,8 @@ const output = process.argv[2] ? path.resolve(process.argv[2]) : path.join(sourc
 assert(!fs.existsSync(output), 'Choose a new output directory; build-pages does not delete existing files.');
 const manifest = JSON.parse(fs.readFileSync(path.join(source, 'assets/landing-v5/stream/stream-manifest.json'), 'utf8'));
 const sourceHtml = fs.readFileSync(path.join(source, 'index.html'), 'utf8');
+const hdFilm = sourceHtml.includes('assets/landing-hd-20261017/stone/manifest.json');
+const hdStream = hdFilm ? JSON.parse(fs.readFileSync(path.join(source, 'assets/landing-hd-20261017/stream/stream-manifest.json'), 'utf8')) : {videos: []};
 const streamedStone = /data-stream-manifest="assets\/landing-v5\/mse\/stone\/manifest\.json(?:\?[^\"]*)?"/.test(sourceHtml);
 const originalStream = streamedStone ? JSON.parse(fs.readFileSync(path.join(source, 'assets/landing-v5/mse/stone/manifest.json'), 'utf8')) : null;
 assert.equal(manifest.version, 1);
@@ -17,12 +19,17 @@ for (const video of manifest.videos) {
   assert(Array.isArray(video.orderedParts) && video.orderedParts.length > 0);
   for (const part of video.orderedParts) assert(/^assets\/landing-v5\/stream\/[\w.-]+\.bin$/.test(part.path), 'Invalid video part path.');
 }
-const referencedVideos = manifest.videos.filter(video => sourceHtml.includes(`data-src="${video.original}"`));
+const referencedVideos = [...manifest.videos.filter(video => sourceHtml.includes(`data-src="${video.original}"`)), ...hdStream.videos];
+for (const video of hdStream.videos) {
+  assert(/^assets\/landing-hd-20261017\/[\w.-]+\.mp4$/.test(video.original));
+  for (const part of video.orderedParts) assert(/^assets\/landing-hd-20261017\/stream\/[\w.-]+\.bin$/.test(part.path));
+}
 const onlineFilm = sourceHtml.includes('assets/landing-online-20261017/stone/manifest.json');
 const excluded = new Set([
   '.git', '.github', 'scripts', '_stage_pages', 'assets/landing-v5/stream',
   ...(streamedStone ? ['assets/landing-v5/mse/stone'] : []),
   ...(onlineFilm ? ['assets/landing-v5/mse', 'assets/landing-v5/transition-rubbing-hall-v6-20261016.mp4'] : []),
+  ...(hdFilm ? ['assets/landing-v5/mse', 'assets/landing-v5/transition-rubbing-hall-v6-20261016.mp4', 'assets/landing-online-20261017', 'assets/models/stele/beilin-stele.glb', 'assets/landing-hd-20261017/stream', ...hdStream.videos.map(video => video.original)] : []),
   path.relative(source, output).split(path.sep).join('/'),
   ...manifest.videos.map(video => video.original),
 ]);
@@ -125,4 +132,12 @@ for (const video of referencedVideos) {
 }
 fs.writeFileSync(indexFile, hostedHtml);
 bytes += Buffer.byteLength(hostedHtml) - Buffer.byteLength(html);
+if (hdFilm) {
+  const {build: buildPreloadManifest} = require('./build-preload-manifest.cjs');
+  const preload = buildPreloadManifest(output, 'hdpreload20261017');
+  const preloadData = JSON.stringify(preload, null, 2) + '\n';
+  fs.writeFileSync(path.join(output, 'preload-manifest.json'), preloadData);
+  bytes += Buffer.byteLength(preloadData); files++;
+}
+assert(bytes < 1_000_000_000, 'Pages artifact exceeds 1 GB after preload manifest.');
 console.log(JSON.stringify({ output, files, bytes, videos }, null, 2));

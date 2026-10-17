@@ -1,5 +1,5 @@
 (() => {
-  const workerURL=new URL('./home-frame-worker.js?v=online20261017',document.currentScript.src);
+  const workerURL=new URL('./home-frame-worker.js?v=hdpreload20261017',document.currentScript.src);
   const diagnostic=new URLSearchParams(location.search).has('film-debug');
   window.createScrollFrames = async (video,source,options={}) => {
     let worker,canvas,observer,player,closed=false,failed=false,suspended=false,ready=false,desired=0,painted=-1,serial=0;

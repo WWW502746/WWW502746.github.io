@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "videos": [
+    {
+      "id": "stone",
+      "original": "assets/landing-hd-20261017/stone-4k15.mp4",
+      "size": 131360384,
+      "originalSha256": "0d574f074e0d9fea0332a362c4054a160db3e7c6bbe1648902e4df9750d6bcd7",
+      "orderedParts": [
+        {
+          "path": "assets/landing-hd-20261017/stream/stone-01.bin",
+          "size": 43786795,
+          "sha256": "ef4e96e90801a52f34f1ed11fcfb6213ab4bd7fea3727955cbb54233f62382d5"
+        },
+        {
+          "path": "assets/landing-hd-20261017/stream/stone-02.bin",
+          "size": 43786795,
+          "sha256": "8819c31f0dac60ffc04a61dde4a5a3c25f26e82ae732fda1a8f36976a8f91d6c"
+        },
+        {
+          "path": "assets/landing-hd-20261017/stream/stone-03.bin",
+          "size": 43786794,
+          "sha256": "90e7e2eb6f07fbbb44a59d0502698f75e35462084f60378106831e142c2cd747"
+        }
+      ]
+    }
+  ]
+}
