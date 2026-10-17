@@ -11,10 +11,36 @@ const artifactViewers = [...document.querySelectorAll("[data-artifact-viewer]")]
 const glyphFieldFrame = document.querySelector(".glyph-field-frame");
 const mobileExhibition = matchMedia('(max-width:800px), (max-width:1100px) and (pointer:coarse)').matches;
 if (glyphFieldFrame && mobileExhibition) glyphFieldFrame.closest('.works-module--glyph').remove();
-if (glyphFieldFrame && !mobileExhibition) {
+function loadGlyphField() {
+  if (!glyphFieldFrame?.isConnected || mobileExhibition || glyphFieldFrame.dataset.loaded || document.hidden) return;
+  const page = glyphFieldFrame.closest('[data-page="works"]');
+  if (!page?.classList.contains('page--active')) return;
+  const bounds = page.getBoundingClientRect();
+  const module = glyphFieldFrame.closest('.works-module--glyph').getBoundingClientRect();
+  const entryLine = Math.min(innerHeight, bounds.bottom) - innerHeight * .4;
+  if (module.top > entryLine || module.bottom < Math.max(0, bounds.top)) return;
   const localPreview = ["localhost", "127.0.0.1"].includes(location.hostname) && location.port === "4175";
+  glyphFieldFrame.dataset.loaded = 'true';
   glyphFieldFrame.src = localPreview ? "http://127.0.0.1:3002/lab/glyph-field" : "/lab/glyph-field/";
 }
+function loadWorksImages() {
+  document.querySelectorAll('[data-route-image="works"][data-src]').forEach(image => {
+    image.src = image.dataset.src;
+    image.removeAttribute('data-src');
+  });
+}
+document.addEventListener('click', event => {
+  if (event.target.closest('.experience-controls [aria-haspopup="dialog"]')) loadWorksImages();
+});
+let glyphCheck = 0;
+function scheduleGlyphField() {
+  if (!glyphCheck) glyphCheck = requestAnimationFrame(() => { glyphCheck = 0; loadGlyphField(); });
+}
+document.querySelector('[data-page="works"]').addEventListener('scroll', scheduleGlyphField, { passive: true });
+window.addEventListener('scroll', scheduleGlyphField, { passive: true });
+window.addEventListener('resize', scheduleGlyphField);
+document.addEventListener('visibilitychange', scheduleGlyphField);
+window.addEventListener('site:page', scheduleGlyphField);
 const steleCover = "assets/works/stele/cover-v1.webp";
 const workImages = {
   floral360: [
@@ -70,7 +96,10 @@ function showPage(route, immediate = false, homeSection = null) {
       page.setAttribute("aria-hidden", String(!active));
     });
     currentPage = target.dataset.page;
-    if (currentPage === 'works') window.pageMotion?.enterWorks(previousPage);
+    if (currentPage === 'works') {
+      loadWorksImages();
+      window.pageMotion?.enterWorks(previousPage);
+    }
     window.pageMotion?.syncRoute();
 
     document.body.classList.toggle("is-name", currentPage === "name");
@@ -370,10 +399,34 @@ function openAddress() {
   } else showPage(route.startsWith('work-') ? 'works' : ["home", "works", "name-gateway", "name"].includes(route) ? route : "home", true);
 }
 
-window.addEventListener("load", () => {
+const bootStarted = performance.now();
+let bootFinished = false;
+const bootLimit = setTimeout(finishBoot, 4000);
+function finishBoot() {
+  if (bootFinished) return;
+  bootFinished = true;
+  clearTimeout(bootLimit);
+  setTimeout(() => document.querySelector('.boot')?.classList.add('is-gone'), Math.max(0, 650 - (performance.now() - bootStarted)));
+}
+window.addEventListener('site:page', event => {
+  const route = event.detail.route;
+  const image = route === 'home'
+    ? document.querySelectorAll('.home-film .scene .still')[event.detail.homeSection ?? 0]
+    : route === 'detail' ? detailPage.querySelector('.surface-base')
+    : route === 'works' ? document.querySelector('[data-route-image="works"]')
+    : route === 'name-gateway' ? document.querySelector('.name-entry__image') : null;
+  if (!image) { finishBoot(); return; }
+  image.loading = 'eager';
+  if (image.decode) image.decode().catch(() => {}).finally(finishBoot);
+  else if (image.complete) finishBoot();
+  else ['load', 'error'].forEach(name => image.addEventListener(name, finishBoot, { once: true }));
+}, { once: true });
+function startOpening() {
   openAddress();
   observeReveals();
-  setTimeout(() => document.querySelector(".boot").classList.add("is-gone"), 1050);
-});
+}
+// Routing listeners must be installed, while unrelated images and the iframe must not hold the opening.
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', startOpening, { once: true });
+else startOpening();
 
 window.addEventListener("hashchange", openAddress);

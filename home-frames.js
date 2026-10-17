@@ -1,5 +1,5 @@
 (() => {
-  const workerURL=new URL('./home-frame-worker.js?v=v5.10',document.currentScript.src);
+  const workerURL=new URL('./home-frame-worker.js?v=online20261017',document.currentScript.src);
   const diagnostic=new URLSearchParams(location.search).has('film-debug');
   window.createScrollFrames = async (video,source,options={}) => {
     let worker,canvas,observer,player,closed=false,failed=false,suspended=false,ready=false,desired=0,painted=-1,serial=0;
@@ -19,7 +19,7 @@
     try{
       if(!window.Worker||!HTMLCanvasElement.prototype.transferControlToOffscreen)throw new Error('后台绘制不可用');
       const provider=await source.getSource();
-      canvas=document.createElement('canvas');canvas.width=3840;canvas.height=2160;
+      canvas=document.createElement('canvas');canvas.width=provider.manifest.width||3840;canvas.height=provider.manifest.height||2160;
       canvas.className='transition-film';canvas.style.opacity='0';canvas.style.pointerEvents='none';canvas.setAttribute('aria-hidden','true');video.after(canvas);
       const offscreen=canvas.transferControlToOffscreen();
       worker=new Worker(workerURL);
@@ -42,7 +42,7 @@
           }catch(error){if(reads.get(message.requestId)===request&&!closed&&!failed){reads.delete(message.requestId);fail(error);}}
         } else if(message.type==='cancelRead')reads.delete(message.requestId);
         else if(message.type==='ready'){
-          if(message.width!==3840||message.height!==2160){fail(new Error('原视频尺寸发生变化'));return;}
+          if(message.width!==canvas.width||message.height!==canvas.height){fail(new Error('视频尺寸与清单不符'));return;}
           resolveInit();
         } else if(message.type==='drawn'){
           if(suspended)return;

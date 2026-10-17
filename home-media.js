@@ -4,7 +4,7 @@
     const media = new MediaSource();
     const objectUrl = URL.createObjectURL(media);
     const base = new URL(manifestUrl, location.href);
-    // Retain the original compressed GOPs for reverse seeks; HTTP caches can evict this 225MB film.
+    // Keep fetched GOPs for reverse seeks without downloading the whole film ahead.
     const cache = new Map();
     let fetching = 0;
     let manifest, buffer, desired = 0, running = false, initialized = false, failed = false, radius = .6, framesActive = false;
@@ -28,7 +28,6 @@
     const stats = { completed: 0, bytes: 0, packetRequests: 0, urgentRequests: 0, cancels: 0, resumes: 0, readBytes: 0, skippedBytes: 0, maxBackground: 0, cache };
     window.packetMediaStats = stats;
     let hadFrame = false, lastScroll = performance.now(), idleTimer;
-    const secondVideo = document.querySelector?.('#home-transition-23');
     function record(src) {
       if (!records.has(src)) {
         const item = { done: false, direct: false };
@@ -70,13 +69,13 @@
       const pack = manifest.packs.find(pack => pack.parts.some(part => part.src === src));
       return { pack, part: pack.parts.find(part => part.src === src) };
     }
-    function urgent(src) {
+    function urgent(src, background = false) {
       const item = record(src);
       if (item.done || item.direct) return;
       item.direct = true;fetching++;stats.urgentRequests++;
       const { pack, part } = locate(src), controller = new AbortController();
       rangeRequests.add(controller);
-      fetch(new URL(pack.src, base), { cache: 'force-cache', mode: 'same-origin', priority: 'high', signal: controller.signal,
+      fetch(new URL(pack.src, base), { cache: 'force-cache', mode: 'same-origin', priority: background ? 'low' : 'high', signal: controller.signal,
         headers: { Range: `bytes=${part.offset}-${part.offset + part.bytes - 1}` } })
         .then(async response => {
           const bytes = new Uint8Array(part.bytes);let filled = 0;
@@ -128,20 +127,14 @@
       let state = packets.get(pack.src);
       if (src === manifest.init.src && !state?.running) state = startPacket(pack);
       // The currently arriving GOP can finish on the stream; distant native seeks get an exact high-priority range.
-      if (!background && src !== manifest.init.src && (!state?.running || part.offset + part.bytes - state.received > part.bytes)) urgent(src);
+      if (src !== manifest.init.src && (!state?.running || part.offset + part.bytes - state.received > part.bytes)) urgent(src, background);
       return item.promise;
     }
     function canPrepare() {
       if (document.hidden) return false;
       const page = video.closest('[data-page]');
       if (page && !page.classList.contains('page--active')) return false;
-      if (!hadFrame || (video.style.opacity !== '0' && desired < manifest.fragments.at(-1).start)) return true;
-      if (performance.now() - lastScroll < 700 || !secondVideo || secondVideo.readyState < 2 || !Number.isFinite(secondVideo.duration) || secondVideo.duration <= 0) return false;
-      const ranges = secondVideo.buffered;
-      for (let index = 0; index < ranges.length; index++) {
-        if (ranges.start(index) <= .00001 && ranges.end(index) >= secondVideo.duration - .00001) return true;
-      }
-      return false;
+      return hadFrame && video.style.opacity !== '0' && performance.now() - lastScroll >= 700;
     }
     function prefetch() {
       if (failed || !initialized) return;
@@ -149,9 +142,9 @@
         for (const state of packets.values()) if (state.running && !state.controller.signal.aborted) { stats.cancels++;state.controller.abort(); }
         return;
       }
-      if ([...packets.values()].some(state => state.running)) return;
-      const pack = manifest.packs.find(pack => pack.parts.some(part => !records.get(part.src)?.done));
-      if (pack) startPacket(pack);
+      if (fetching || [...packets.values()].some(state => state.running)) return;
+      const part = manifest.fragments.find(part => part.end > desired - .2 && part.start < desired + .5 && !records.get(part.src)?.done);
+      if (part) fetchBytes(part.src, true);
     }
     video.addEventListener('loadeddata', () => { hadFrame = true;prefetch(); }, { once: true });
     document.addEventListener('visibilitychange', prefetch);
@@ -159,7 +152,6 @@
     window.addEventListener('scroll', () => {
       lastScroll = performance.now();clearTimeout(idleTimer);prefetch();idleTimer = setTimeout(prefetch, 700);
     }, { passive: true });
-    ['progress', 'loadeddata', 'canplaythrough'].forEach(event => secondVideo?.addEventListener(event, prefetch));
     function update(method, ...args) {
       return new Promise((resolve, reject) => {
         const clean = () => ['updateend', 'error', 'abort'].forEach(name => buffer.removeEventListener(name, done));

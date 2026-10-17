@@ -16,7 +16,7 @@
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const hostedMedia = location.hostname === 'www502746.github.io';
   const playhead = { progress: 0 };
-  let trigger, active = false, loaded = false, resizeProgress = null, endSince = null;
+  let trigger, active = false, resizeProgress = null, endSince = null;
   const ramp = (value, start, end) => Math.max(0, Math.min(1, (value - start) / (end - start)));
 
   // Keep one seek per clip in flight; decoding follows the latest scroll position.
@@ -35,6 +35,10 @@
     const t = playhead.progress * 2;
     const local = [Math.min(t, 1), Math.max(0, t - 1)];
     const current = t < 1 ? 0 : 1;
+    if (active && trigger) {
+      prepareClip(clips[current]);
+      if (current === 0 && local[0] > .82) prepareClip(clips[1]);
+    }
     clips.forEach((clip, i) => {
       const frame = Math.round(ramp(local[i], .12, .84) * (clip.frames - 1));
       // The second clip's last frame is very short; retain its measured midpoint.
@@ -63,6 +67,33 @@
     endSince = playhead.progress < .999 ? null : endSince ?? performance.now();
     const message = clips[current].failed ? '视频暂未载入 · 静态预览' : clips[current].ready ? '' : '正在准备转场…';
     if (status.textContent !== message) status.textContent = message;
+  }
+  function prepareClip(clip) {
+    if (clip.started) return;
+    clip.started = true;
+    const source = hostedMedia ? clip.video.dataset.hostedSrc : clip.video.dataset.src;
+    clip.video.preload = 'auto';
+    clip.stream = clip.video.dataset.streamManifest
+      ? window.createScrollMedia?.(clip.video, clip.video.dataset.streamManifest, source) : null;
+    if (!clip.stream) { clip.video.src = source; clip.video.load(); }
+    if (clip === clips[0] && clip.stream && window.createScrollFrames) {
+      window.createScrollFrames(clip.video, clip.stream, {
+        getFrame: () => Math.floor(clip.desiredTime * clip.fps),
+        onReady(player) {
+          if (!active || playhead.progress >= .5 || document.hidden) { player.suspend(); return; }
+          clip.ready = true; clip.stream.useFrames?.(true); render();
+        },
+        onFallback() {
+          clip.stream.useFrames?.(false);
+          clip.ready = clip.video.readyState >= 2; render();
+        }
+      }).then(player => {
+        if (!player || player.failed) return;
+        clip.framePlayer = player;
+        if (!active || playhead.progress >= .5 || document.hidden) player.suspend();
+        render();
+      });
+    }
   }
   function goTo(index, behavior = 'smooth') {
     resizeProgress = null;
@@ -127,36 +158,9 @@
     if (trigger) {
       trigger.enable(false, false);
       ScrollTrigger.refresh();
-      if (!loaded) {
-        loaded = true;
-        clips.forEach(clip => {
-          const source = hostedMedia ? clip.video.dataset.hostedSrc : clip.video.dataset.src;
-          clip.video.preload = 'auto';
-          clip.stream = clip.video.dataset.streamManifest
-            ? window.createScrollMedia?.(clip.video, clip.video.dataset.streamManifest, source) : null;
-          if (!clip.stream) { clip.video.src = source; clip.video.load(); }
-          if (clip.stream && window.createScrollFrames) {
-            window.createScrollFrames(clip.video, clip.stream, {
-              getFrame: () => Math.floor(clip.desiredTime * clip.fps),
-              onReady(player) {
-                if (!active || playhead.progress >= .5 || document.hidden) { player.suspend(); return; }
-                clip.ready = true; clip.stream.useFrames?.(true); render();
-              },
-              onFallback() {
-                clip.stream.useFrames?.(false);
-                clip.ready = clip.video.readyState >= 2; render();
-              }
-            }).then(player => {
-              if (!player || player.failed) return;
-              clip.framePlayer = player;
-              if (!active || playhead.progress >= .5 || document.hidden) player.suspend();
-              render();
-            });
-          }
-        });
-      }
     }
     if (index !== null) goTo(index, 'instant');
+    if (trigger) render();
   }
   window.addEventListener('site:page', event => enter(event.detail.route, event.detail.homeSection));
   const initial = location.hash.slice(1);

@@ -18,9 +18,11 @@ for (const video of manifest.videos) {
   for (const part of video.orderedParts) assert(/^assets\/landing-v5\/stream\/[\w.-]+\.bin$/.test(part.path), 'Invalid video part path.');
 }
 const referencedVideos = manifest.videos.filter(video => sourceHtml.includes(`data-src="${video.original}"`));
+const onlineFilm = sourceHtml.includes('assets/landing-online-20261017/stone/manifest.json');
 const excluded = new Set([
   '.git', '.github', 'scripts', '_stage_pages', 'assets/landing-v5/stream',
   ...(streamedStone ? ['assets/landing-v5/mse/stone'] : []),
+  ...(onlineFilm ? ['assets/landing-v5/mse', 'assets/landing-v5/transition-rubbing-hall-v6-20261016.mp4'] : []),
   path.relative(source, output).split(path.sep).join('/'),
   ...manifest.videos.map(video => video.original),
 ]);
